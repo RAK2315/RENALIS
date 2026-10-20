@@ -36,3 +36,7 @@ The final browser player was checked for chapter seeking, advancing playback, wo
 The prepared source folder passed50 backend tests and the existing768-record release contract check before packaging. These are local checks; the prepared GitHub Actions workflow has not been run remotely. The final deck contains19 editable slides and the architecture deck4 editable diagrams, each with a PDF copy and checked source references.
 
 Media receipts remain in `artifacts/submission-v05/verification.json`, `capture-checks.json`, `audio-provenance.json`, `player-checks.json`, and `progress.json`. Public source hashes are listed in `artifacts/release/source-manifest.json`. No public repository, YouTube upload, anonymous-access verification or organizer submission has been completed by this production run. Follow `docs/UPLOAD_NEXT.md` after downloading the files.
+
+## Final publication follow-up — 20 October 2026
+
+After the local production run, the source was published to [RAK2315/RENALIS](https://github.com/RAK2315/RENALIS), and its GitHub build/test workflow passed. The entrant uploaded the joined film: [Unlisted 20:00 demo](https://www.youtube.com/watch?v=ZcWNYMtM1tI). The actual links are in README and team metadata. Anonymous YouTube metadata confirms unlisted access and 1,200-second duration; required public document downloads were checked. See `docs/submission-verification.json` and the final checklist. Organizer form submission and its receipt remain the entrant's final action.

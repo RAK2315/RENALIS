@@ -1,6 +1,6 @@
 # Submission and release checklist
 
-Current package: RENALIS 0.4, 18 October 2026. This is a local research prototype, not a submitted or clinically validated product.
+Current software: RENALIS 0.4. Submission materials finalized 20 October 2026. Source and video are published; organizer form submission is still the entrant's action. Clinical validation is not claimed.
 
 ## Prepared locally
 
@@ -18,9 +18,26 @@ User-provided entrant details: Team Sigmoid; Rehaan, solo; JSS University, Noida
 
 ## Publication and video
 
-The screenshot requires a 15-20-minute unlisted YouTube video; the pasted brief says minimum 20 minutes. Use a verified 20:00 recording and confirm the interpretation if needed. The older 2:46 promo is historical v0.3 media and is not the submission demo. A complete demonstration must include the actual new UI, model assumptions, real computed evaluations, failure states, architecture and remaining validation gates.
+The screenshot requires a 15–20-minute unlisted YouTube video; the pasted brief says minimum 20 minutes. The uploaded demo is exactly **20:00**: [RENALIS Team Sigmoid](https://www.youtube.com/watch?v=ZcWNYMtM1tI). Anonymous YouTube player metadata reports `OK`, `isUnlisted: true`, `isPrivate: false` and `lengthSeconds: 1200`. This is the full current demonstration, including actual UI interactions, competing explanations, the adaptive CO→RBV investigation, architecture, measured evaluations and remaining validation gates. The older 2:46 promo is historical media.
 
-The reviewed source repository is public. The verified local20-minute master, captions, thumbnail and upload description are ready. Upload the master as unlisted and add the verified YouTube URL to README. Open every required link in an anonymous browser without authentication. Verify PDF/PPT downloads, video duration/audio/captions, license and repository visibility. Record the organizer submission receipt separately. YouTube upload and organizer submission remain pending.
+The reviewed source repository is public. The actual YouTube URL is in README and team metadata. Required document downloads were checked without authentication and compared with local file hashes. [Verification record](submission-verification.json). No organizer form has been submitted by this repository update.
+
+## Mandatory README checklist
+
+- [x] Team details: Sigmoid; Rehaan, solo entrant and developer.
+- [x] College/incubator information: JSS University, Noida.
+- [x] Project title: RENALIS — Evidence-aware Dialysis Digital Twin.
+- [x] Problem statement.
+- [x] Healthcare use case.
+- [x] Technical stack.
+- [x] AI/ML model or framework details, with model card and limitations.
+- [x] Unlisted 15–20-minute demo video: actual 20:00 YouTube link in README.
+- [x] Open-source license details: MIT and third-party notices.
+- [x] Architecture diagram: PDF and editable PPTX linked in README.
+- [x] Presentation covering project details and outcomes: PDF and editable PPTX linked in README.
+- [x] Public access to the repository, required files and unlisted video without additional permissions.
+
+The screenshot's twelve required content items are present. This checklist records artifact availability, not organizer acceptance, clinical validity or a competition result. **Remaining:** paste the repository URL into the form, select the checklist items, submit and retain the receipt. See [final submission steps](UPLOAD_NEXT.md).
 
 ## Evidence gates beyond a hackathon build
 

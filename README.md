@@ -2,15 +2,23 @@
 
 **Team Sigmoid · Rehaan (solo) · JSS University, Noida**
 
-Hackathon research prototype · Submission package, 19 October 2026
+Hackathon research prototype · Final submission materials, 20 October 2026
 
 **Public source:** [RAK2315/RENALIS](https://github.com/RAK2315/RENALIS).
 
 RENALIS connects preceding-session learning, competing physiological explanations, and the next feasible evidence question in a dialysis research workspace. It shows what the model assumes, what an acquired reading changes, and what remains uncertain.
 
+## Team details
+
+- **Team:** Sigmoid
+- **Member:** Rehaan — solo entrant; project design, development and submission
+- **College:** JSS University, Noida
+
 ## Demo video
 
-**20-minute narrated demo:** the completed local master is `RENALIS_Team_Sigmoid_20min.mp4`. The entrant will upload it to YouTube as **Unlisted** and add the actual watch link here before submission. This repository is not submission-complete without that verified link.
+**20-minute narrated demo:** [Watch the unlisted video](https://www.youtube.com/watch?v=ZcWNYMtM1tI). **Source:** [Public GitHub repository](https://github.com/RAK2315/RENALIS).
+
+The uploaded video is **20:00**, **Unlisted**, and available without signing in. YouTube player metadata was checked anonymously on 20 October 2026. [Submission verification record](docs/submission-verification.json).
 
 Four chapters: **00:00** problem and architecture · **05:00** adaptive CO→RBV investigation · **10:00** evidence and evaluations · **15:00** robustness, reproducibility and next steps. See [upload checklist](docs/UPLOAD_NEXT.md).
 
@@ -117,17 +125,17 @@ Clinical collaborators, approvals, paired physiological calibration, an expert t
 
 | Mandatory README item | Location/status |
 |---|---|
-| Team details | Sigmoid; Rehaan; solo entrant |
-| College/incubator | JSS University, Noida |
-| Project title | RENALIS — Evidence-aware Dialysis Digital Twin |
-| Problem statement | Above |
-| Healthcare use case | Above |
-| Technical stack | Above |
-| AI/ML model/framework details | Above and model card |
-| 15–20 minute unlisted YouTube demo | 20-minute film prepared locally; actual YouTube watch link must be added after entrant upload |
-| Open-source license | MIT and third-party notices |
-| Architecture diagram PDF/PPT | Linked above |
-| Presentation PDF/PPT with details/outcomes | Linked above |
-| All files and links publicly accessible | Public source: [RAK2315/RENALIS](https://github.com/RAK2315/RENALIS); add and verify the actual unlisted video link before submitting |
+| Team details | Included: [Sigmoid; Rehaan; solo entrant](#team-details) |
+| College/incubator | Included: [JSS University, Noida](#team-details) |
+| Project title | Included: RENALIS — Evidence-aware Dialysis Digital Twin |
+| Problem statement | Included: [problem statement](#problem-statement-and-healthcare-use-case) |
+| Healthcare use case | Included: [maintenance hemodialysis research review](#problem-statement-and-healthcare-use-case) |
+| Technical stack | Included: [technical stack](#technical-stack-and-aiml-details) |
+| AI/ML model/framework details | Included: [model/framework details](#technical-stack-and-aiml-details) and [model card](docs/model-card.md) |
+| 15–20 minute unlisted YouTube demo | Verified: [Unlisted 20:00 demo](https://www.youtube.com/watch?v=ZcWNYMtM1tI) |
+| Open-source license | Included: [MIT](LICENSE) and [third-party notices](THIRD_PARTY_NOTICES.md) |
+| Architecture diagram PDF/PPT | Included: [PDF](output/pdf/RENALIS_Architecture_v05.pdf) and [editable PPTX](output/presentations/RENALIS_Architecture_v05_Release_Final.pptx) |
+| Presentation PDF/PPT with details/outcomes | Included: [PDF](output/pdf/RENALIS_Project_Presentation_v05.pdf) and [editable PPTX](output/presentations/RENALIS_Project_Presentation_v05_Release_Final.pptx) |
+| All files and links publicly accessible | Verified: public repository, anonymous linked-file downloads, and video player access; see [verification record](docs/submission-verification.json) |
 
-[Final upload steps](docs/UPLOAD_NEXT.md) · [submission checklist](docs/submission-checklist.md) · [team metadata](docs/team.json). YouTube upload and organizer submission remain pending.
+[Final submission steps](docs/UPLOAD_NEXT.md) · [submission checklist](docs/submission-checklist.md) · [team metadata](docs/team.json). The repository and video are published. Organizer form submission and its receipt remain the entrant's final step.

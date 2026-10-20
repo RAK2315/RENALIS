@@ -1,10 +1,15 @@
 {
   "team_name": "Sigmoid",
-  "members": [{"name": "Rehaan", "role": "Solo entrant; project design, development and submission"}],
+  "members": [
+    {
+      "name": "Rehaan",
+      "role": "Solo entrant; project design, development and submission"
+    }
+  ],
   "institution": "JSS University, Noida",
   "github_owner": "RAK2315",
   "source": "User-provided team details; GitHub owner verified from local authenticated account",
-  "video_publication": "Entrant will download and upload the completed film",
-  "youtube_url": null,
+  "video_publication": "Uploaded by entrant; YouTube player metadata verified anonymously: Unlisted, 1200 seconds, playability OK",
+  "youtube_url": "https://www.youtube.com/watch?v=ZcWNYMtM1tI",
   "repository_url": "https://github.com/RAK2315/RENALIS"
 }

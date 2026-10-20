@@ -1,0 +1,76 @@
+{
+  "checked_at_utc": "2026-10-20T05:38:58.825182+00:00",
+  "repository": {
+    "url": "https://github.com/RAK2315/RENALIS",
+    "visibility": "public",
+    "default_branch": "codex/submission"
+  },
+  "video": {
+    "url": "https://www.youtube.com/watch?v=ZcWNYMtM1tI",
+    "title": "RENALIS Team Sigmoid",
+    "duration_seconds": 1200,
+    "visibility": "unlisted",
+    "playability_status": "OK",
+    "is_private": false,
+    "method": "Anonymous YouTube watch-page player metadata; no login or account cookies"
+  },
+  "public_artifacts": [
+    {
+      "path": "LICENSE",
+      "http_status": 200,
+      "sha256": "8e1b9e1572361924503f7af4b5bee11e956d392805949dc3df7a7c7b9b63026c",
+      "comparison": "Git text normalized to LF",
+      "matches_local_file": true
+    },
+    {
+      "path": "THIRD_PARTY_NOTICES.md",
+      "http_status": 200,
+      "sha256": "7f16164820a6a7f7aa5a9451f70389a95edec2a49b7c7beb65d509539e487373",
+      "comparison": "Git text normalized to LF",
+      "matches_local_file": true
+    },
+    {
+      "path": "docs/model-card.md",
+      "http_status": 200,
+      "sha256": "2270b0af4b97d153e09a1f31d077a418a4c38409fdd66fd383dcc4d0abf04d85",
+      "comparison": "Git text normalized to LF",
+      "matches_local_file": true
+    },
+    {
+      "path": "output/pdf/RENALIS_Architecture_v05.pdf",
+      "http_status": 200,
+      "sha256": "3e681140e43bf3f73cf611a0408a6e784daaedc1b66179757598279d536b83a2",
+      "comparison": "byte-for-byte",
+      "matches_local_file": true
+    },
+    {
+      "path": "output/pdf/RENALIS_Project_Presentation_v05.pdf",
+      "http_status": 200,
+      "sha256": "63a7bf57c5ef7a9786ea584e1e08f765293d2f56e812ee0872b89507833bcccc",
+      "comparison": "byte-for-byte",
+      "matches_local_file": true
+    },
+    {
+      "path": "output/presentations/RENALIS_Architecture_v05_Release_Final.pptx",
+      "http_status": 200,
+      "sha256": "7254cf14fb71b5e917f016b201d2be959c6ae1cba2fd0f956bae9a670db3d8ba",
+      "comparison": "byte-for-byte",
+      "matches_local_file": true
+    },
+    {
+      "path": "output/presentations/RENALIS_Project_Presentation_v05_Release_Final.pptx",
+      "http_status": 200,
+      "sha256": "176d5a17c93b16d5f7a4eba2f1a723dd6c8247c5cd3d1b0e6f74bb1ba5b3dfb0",
+      "comparison": "byte-for-byte",
+      "matches_local_file": true
+    }
+  ],
+  "authentication_used_for_access_checks": false,
+  "mandatory_readme_items": 12,
+  "mandatory_readme_items_present": 12,
+  "organizer_form_submission": {
+    "status": "not_performed_by_agent",
+    "receipt": null
+  },
+  "scope": "Submission artifact and access verification; not clinical validation or organizer acceptance."
+}
