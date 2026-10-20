@@ -1,5 +1,5 @@
 {
-  "checked_at_utc": "2026-10-20T05:38:58.825182+00:00",
+  "checked_at_utc": "2026-10-20T05:58:49.409269+00:00",
   "repository": {
     "url": "https://github.com/RAK2315/RENALIS",
     "visibility": "public",
@@ -25,7 +25,7 @@
     {
       "path": "THIRD_PARTY_NOTICES.md",
       "http_status": 200,
-      "sha256": "7f16164820a6a7f7aa5a9451f70389a95edec2a49b7c7beb65d509539e487373",
+      "sha256": "c104b4ed5e19e5f6a316a41c8762fc4dde7c35c431e032425786544d7050a970",
       "comparison": "Git text normalized to LF",
       "matches_local_file": true
     },
@@ -37,30 +37,30 @@
       "matches_local_file": true
     },
     {
-      "path": "output/pdf/RENALIS_Architecture_v05.pdf",
+      "path": "output/pdf/RENALIS_Architecture_v06.pdf",
       "http_status": 200,
-      "sha256": "3e681140e43bf3f73cf611a0408a6e784daaedc1b66179757598279d536b83a2",
+      "sha256": "5a3858402e2619e608a2c0c46993d5c0d40c8f6382629f1470e3ae06b5e7d6f6",
       "comparison": "byte-for-byte",
       "matches_local_file": true
     },
     {
-      "path": "output/pdf/RENALIS_Project_Presentation_v05.pdf",
+      "path": "output/pdf/RENALIS_Project_Presentation_v06.pdf",
       "http_status": 200,
-      "sha256": "63a7bf57c5ef7a9786ea584e1e08f765293d2f56e812ee0872b89507833bcccc",
+      "sha256": "3190ee7b5d9df14dff2c59026a8e350b4043c926977a2583325082cb569391b2",
       "comparison": "byte-for-byte",
       "matches_local_file": true
     },
     {
-      "path": "output/presentations/RENALIS_Architecture_v05_Release_Final.pptx",
+      "path": "output/presentations/RENALIS_Architecture_v06_Professional_Final.pptx",
       "http_status": 200,
-      "sha256": "7254cf14fb71b5e917f016b201d2be959c6ae1cba2fd0f956bae9a670db3d8ba",
+      "sha256": "6f61a8f15bdc634f2fe5dfc9ba2d897ae56f5a5c35a4d903a2938413b8c45688",
       "comparison": "byte-for-byte",
       "matches_local_file": true
     },
     {
-      "path": "output/presentations/RENALIS_Project_Presentation_v05_Release_Final.pptx",
+      "path": "output/presentations/RENALIS_Project_Presentation_v06_Design_Final.pptx",
       "http_status": 200,
-      "sha256": "176d5a17c93b16d5f7a4eba2f1a723dd6c8247c5cd3d1b0e6f74bb1ba5b3dfb0",
+      "sha256": "3bcf42e32e60150d919c0a5f66dcfa57d1905cf9695fc73955b89b7801ffa269",
       "comparison": "byte-for-byte",
       "matches_local_file": true
     }
@@ -72,5 +72,12 @@
     "status": "not_performed_by_agent",
     "receipt": null
   },
-  "scope": "Submission artifact and access verification; not clinical validation or organizer acceptance."
+  "scope": "Submission artifact and access verification; not clinical validation or organizer acceptance.",
+  "visual_material_revision": {
+    "revision": "v06",
+    "architecture_views": 6,
+    "presentation_slides": 20,
+    "source_commit_checked": "abaa65e8de7a63d1f7137691f3ec9646022342b6",
+    "anonymous_readme_file_links_checked": 23
+  }
 }
