@@ -1,0 +1,2 @@
+# Optional video pipeline; web application dependencies are unchanged.
+imageio-ffmpeg==0.6.0

@@ -1,0 +1,13 @@
+* text=auto
+*.pdf binary
+*.pptx binary
+*.png binary
+*.jpg binary
+*.jpeg binary
+*.webp binary
+*.mp4 binary
+*.wav binary
+*.zip binary
+*.py text eol=lf
+*.sh text eol=lf
+*.yml text eol=lf

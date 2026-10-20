@@ -1,0 +1,66 @@
+{
+  "status": "evaluated",
+  "dataset": "HEMOBP v3 \u00b7 Taiwan retrospective observations",
+  "source": "https://figshare.com/articles/dataset/Hemrec_VIP_csv/6260654/3",
+  "license": "CC BY 4.0",
+  "input_machine_rows": 4366298,
+  "distinct_bp_rows": 1506275,
+  "eligible_windows": 462000,
+  "train_rows_used": 100000,
+  "test_rows": 77138,
+  "train_patients": 815,
+  "test_patients": 211,
+  "patient_overlap": 0,
+  "test_next_low_bp_windows": 2212,
+  "median_next_reading_minutes": 19.97,
+  "models": [
+    {
+      "label": "Last observed BP",
+      "mae_mm_hg": 11.336
+    },
+    {
+      "label": "Dynamic-only baseline",
+      "mae_mm_hg": 10.697
+    },
+    {
+      "label": "Historical + dynamic baseline",
+      "mae_mm_hg": 10.679
+    }
+  ],
+  "event_model": {
+    "endpoint": "Next distinct measured SBP \u226490 mmHg; current SBP >90; gap 5\u201335 minutes",
+    "threshold_selected_on": "Patient-disjoint validation set; target recall at least 0.75",
+    "validation_patients": 163,
+    "classifier_fit_patients": 652,
+    "test_sensitivity": 0.753,
+    "test_ppv": 0.127,
+    "test_pr_auc": 0.197,
+    "test_false_positive_windows": 11497,
+    "test_positive_windows": 2212,
+    "score_threshold": 0.04981,
+    "score_calibration": "Raw classifier scores; clinical probability calibration not evaluated",
+    "alert_accounting": "Window-level results; not consolidated patient-day alert burden"
+  },
+  "task": "Next distinct BP regression for elapsed gaps 5\u201335 minutes; current SBP >90",
+  "cleaning": {
+    "sbp_range_mm_hg": [
+      30,
+      220
+    ],
+    "elapsed_session_range_minutes": [
+      0,
+      300
+    ],
+    "checksums": "Verified against HEMOBP v3 deposit"
+  },
+  "limitations": [
+    "Retrospective single-deposit benchmark, not prospective clinical validation.",
+    "Episodes inferred from elapsed-time resets and timestamp gaps; needs independent session audit.",
+    "Repeated measurement IDs collapsed to their first occurrence.",
+    "Machine ultrafiltration field used in source units; physiological unit reconciliation remains required.",
+    "No post-session weights or future machine-setting changes used as predictor inputs.",
+    "No external country validation; alerts and scenario effects not clinically validated.",
+    "d1.csv downloaded for the later session audit; weightend is deliberately excluded.",
+    "This baseline has not been integrated into the synthetic particle-twin forecast."
+  ]
+}

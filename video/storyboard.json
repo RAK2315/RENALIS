@@ -1,0 +1,61 @@
+[
+  {"id":"question","chapter":"01 / THE QUESTION","title":"One number.\nThree possible stories.","beats":[
+    {"key":"pressure","text":"During dialysis, a falling pressure reading leaves a question.","screen":"A falling pressure reading"},
+    {"key":"explanations","text":"What is driving it? And what should we measure next?","screen":"What is driving it? What should we measure next?","pause":0.7}
+  ]},
+  {"id":"introduce","chapter":"02 / MEET RENALIS","title":"A clearer next question.","beats":[
+    {"key":"name","text":"Meet Renalis. A dialysis digital twin research prototype.","screen":"RENALIS · Dialysis digital twin · Research prototype"},
+    {"key":"journey","text":"Follow one patient, compare possible explanations, and inspect the evidence.","screen":"One patient → explanations → evidence"}
+  ]},
+  {"id":"patient","chapter":"03 / ONE PATIENT","title":"Start with Meera.","beats":[
+    {"key":"meera","text":"Meet Meera, a fictional patient at minute ninety of a synthetic session.","screen":"Meera · Synthetic patient · Minute 90"},
+    {"key":"state","text":"The workspace makes her estimated fluid state visible.","screen":"Estimated tissue excess and circulating volume"}
+  ]},
+  {"id":"fusion","chapter":"04 / CONNECT THE EVIDENCE","title":"History meets the here and now.","beats":[
+    {"key":"history","text":"Authored historical priors describe the starting assumptions.","screen":"Authored historical priors · Starting assumptions"},
+    {"key":"device","text":"Available pressure and machine observations update the estimated fluid state.","screen":"Available BP + machine observations → estimated fluid state"},
+    {"key":"cutoff","text":"Only information available by the replay cutoff can enter.","screen":"Availability gate · Replay cutoff · Future observations excluded"}
+  ]},
+  {"id":"futures","chapter":"05 / EXPLORE A HYPOTHESIS","title":"One state. Parallel futures.","beats":[
+    {"key":"forecast","text":"From that shared state, explore a hypothetical fluid removal profile.","screen":"Shared estimated state → hypothetical removal profile"},
+    {"key":"tradeoff","text":"Compare pressure trajectories alongside the unfinished fluid target.","screen":"Pressure trajectory + unfinished fluid target"}
+  ]},
+  {"id":"families","chapter":"06 / KEEP ALTERNATIVES VISIBLE","title":"Three competing explanations.","beats":[
+    {"key":"volume","text":"Could fluid removal be outpacing refill?","screen":"Volume / refill · Removal versus return"},
+    {"key":"vascular","text":"Could vascular compensation be limited?","screen":"Vascular compensation · Vessel response"},
+    {"key":"cardiac","text":"Or could the cardiac response be limited? The lab keeps all three explanations visible.","screen":"Cardiac response · Pump response · Three model families"}
+  ]},
+  {"id":"divergence","chapter":"07 / WHY UNCERTAINTY MATTERS","title":"Similar past. Different futures.","beats":[
+    {"key":"history","text":"These model families can fit similar recent pressure readings.","screen":"Similar recent blood pressure fit"},
+    {"key":"branches","text":"Yet the same hypothetical profile produces different simulated futures.","screen":"One hypothetical profile · Different simulated futures"}
+  ]},
+  {"id":"measurement","chapter":"08 / ASK A MORE USEFUL QUESTION","title":"What could change the comparison?","beats":[
+    {"key":"choices","text":"Compare repeat cuff pressure, relative blood volume, and cardiac output.","screen":"Repeat cuff BP · Relative blood volume · Cardiac output"},
+    {"key":"value","text":"Ask which measurement could change the scenario comparison, under the declared assumptions.","screen":"Expected decision value · Declared model assumptions"},
+    {"key":"cost","text":"Include noise, information gain, delay, and measurement burden.","screen":"Noise · Information gain · Delay · Burden"}
+  ]},
+  {"id":"acquire","chapter":"09 / FROM QUESTION TO OBSERVATION","title":"Make the next question concrete.","beats":[
+    {"key":"recommend","text":"In this example, immediate cardiac output has the largest expected decision value.","screen":"Example · Immediate cardiac output · Largest expected decision value"},
+    {"key":"observe","text":"Acquire the labeled synthetic observation: three point seven four liters per minute.","screen":"Synthetic observation · Cardiac output · 3.74 L/min"}
+  ]},
+  {"id":"update","chapter":"10 / LET EVIDENCE CHANGE THE STORY","title":"New evidence. Visible uncertainty.","beats":[
+    {"key":"weights","text":"Compatibility updates as the new observation arrives.","screen":"Before → synthetic observation → updated compatibility"},
+    {"key":"unresolved","text":"Some explanations lose support. Uncertainty can still remain.","screen":"Unresolved · Model compatibility is not a diagnosis probability"}
+  ]},
+  {"id":"guardrail","chapter":"11 / WHEN THE MODEL DOES NOT FIT","title":"The model must be able to stop.","beats":[
+    {"key":"contradiction","text":"What if an observation contradicts every modeled family?","screen":"Observation inconsistent with every modeled family"},
+    {"key":"withhold","text":"Renalis withholds scenario comparisons and makes the mismatch explicit.","screen":"Comparison authority withheld · Model mismatch visible"}
+  ]},
+  {"id":"evidence","chapter":"12 / KEEP EVIDENCE WITH THE RESULT","title":"Every result has a setting.","beats":[
+    {"key":"saved","text":"Saved reports preserve the original observations and model settings.","screen":"Saved report · Original observations · Original settings"},
+    {"key":"research","text":"The research guide separates synthetic behavior, retrospective data, and independent challenges.","screen":"Synthetic behavior · Retrospective data · Independent challenges"}
+  ]},
+  {"id":"limits","chapter":"13 / AN HONEST RESEARCH BOUNDARY","title":"Make the limits visible.","beats":[
+    {"key":"clinical","text":"Clinical benefit has not been established.","screen":"Clinical benefit · Not established"},
+    {"key":"policy","text":"And the independent challenge has not demonstrated measurement policy superiority.","screen":"Measurement-policy superiority · Not demonstrated"}
+  ]},
+  {"id":"close","chapter":"14 / RENALIS","title":"A clearer next question.","beats":[
+    {"key":"question","text":"Renalis. Keep the explanations visible. Ask what evidence would change them.","screen":"Keep explanations visible · Ask what evidence would change them"},
+    {"key":"explore","text":"Explore the twin. Inspect the evidence.","screen":"Explore the twin · Inspect the evidence","pause":1.8}
+  ]}
+]

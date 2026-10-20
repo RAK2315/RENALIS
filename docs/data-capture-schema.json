@@ -1,0 +1,27 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "title": "RENALIS proposed paired observation record",
+  "description": "Engineering design only. No study approval or clinical data collection is implied.",
+  "type": "object",
+  "required": ["patient_pseudonym", "session_pseudonym", "channel", "observed_at", "available_at", "quality", "source"],
+  "properties": {
+    "patient_pseudonym": {"type": "string"},
+    "session_pseudonym": {"type": "string"},
+    "channel": {"type": "string"},
+    "observed_at": {"type": "string", "format": "date-time"},
+    "available_at": {"type": "string", "format": "date-time"},
+    "value": {"type": ["number", "null"]},
+    "unit": {"type": "string"},
+    "quality": {"enum": ["valid", "artifact", "missing", "failed"]},
+    "source": {"type": "string"},
+    "device_method": {"type": "string"},
+    "request_id": {"type": ["string", "null"]},
+    "operator_time_seconds": {"type": "number", "minimum": 0},
+    "failure_reason": {"type": ["string", "null"]},
+    "symptoms_recorded": {"type": "array", "items": {"type": "string"}},
+    "clinical_action_recorded": {"type": ["string", "null"]},
+    "supersedes": {"type": ["string", "null"]},
+    "correction_reason": {"type": ["string", "null"]}
+  },
+  "additionalProperties": false
+}

@@ -1,0 +1,74 @@
+<!doctype html><html><head><meta charset="utf-8"><title>RENALIS submission motion composition</title><style>html,body{margin:0;background:#173d30;overflow:hidden}canvas{display:block;width:1920px;height:1080px}</style></head><body><canvas id="film" width="1920" height="1080"></canvas><script>
+'use strict';
+const canvas=document.querySelector('canvas'),c=canvas.getContext('2d',{alpha:false});
+const C={paper:'#f5f6ef',ink:'#173d30',muted:'#6a7e69',line:'#d7e1cf',sage:'#bdd49d',volume:'#307961',cardiac:'#786398',vascular:'#ac7346',mixed:'#487b95'};
+const colors=[C.volume,C.vascular,C.cardiac,C.mixed],names=['Volume / refill','Vascular','Cardiac','Mixed'];
+const chapterNames=['The problem & the twin','The next evidence question','The evidence behind the claims','A complete research prototype'];
+const clamp=(x,a=0,b=1)=>Math.max(a,Math.min(b,x)),ease=x=>{x=clamp(x);return x*x*(3-2*x)};
+let scenes=[],captions=[],posters={},errors=[];
+function rect(x,y,w,h,fill,stroke=null,r=16){c.beginPath();c.roundRect(x,y,w,h,r);c.fillStyle=fill;c.fill();if(stroke){c.strokeStyle=stroke;c.lineWidth=1.5;c.stroke();}}
+function text(t,x,y,size=28,color=C.ink,font='Segoe UI',weight=400,align='left'){c.font=`${weight} ${size}px ${font}`;c.textAlign=align;c.textBaseline='alphabetic';c.fillStyle=color;c.fillText(t,x,y);}
+function wrap(t,x,y,w,size=28,color=C.ink,font='Segoe UI',weight=400,line=1.34){c.font=`${weight} ${size}px ${font}`;let row='',n=0;for(const word of t.split(/\s+/)){const next=row?row+' '+word:word;if(c.measureText(next).width>w&&row){text(row,x,y+n*size*line,size,color,font,weight);row=word;n++;}else row=next;}if(row)text(row,x,y+n++*size*line,size,color,font,weight);return n*size*line;}
+function line(x,y,x2,y2,color=C.line,w=2){c.beginPath();c.moveTo(x,y);c.lineTo(x2,y2);c.strokeStyle=color;c.lineWidth=w;c.stroke();}
+function dot(x,y,r,color){c.beginPath();c.arc(x,y,r,0,Math.PI*2);c.fillStyle=color;c.fill();}
+function arrow(x,y,x2,y2,t,color=C.volume){line(x,y,x2,y2,color,2);for(let i=0;i<4;i++){let p=(t*.13+i/4)%1;dot(x+(x2-x)*p,y+(y2-y)*p,4,color);}const a=Math.atan2(y2-y,x2-x);line(x2,y2,x2-12*Math.cos(a-.5),y2-12*Math.sin(a-.5),color,2);line(x2,y2,x2-12*Math.cos(a+.5),y2-12*Math.sin(a+.5),color,2);}
+function node(label,x,y,w=280,h=100,fill='#e9efe1'){rect(x,y,w,h,fill,C.line,18);wrap(label,x+24,y+42,w-48,25,C.ink,'Segoe UI',500);}
+function grid(t){for(let x=0;x<1920;x+=70)for(let y=0;y<1080;y+=70)dot(x+8*Math.sin(t*.12+y),y,1,'#dbe4d3');}
+function plot(t){const x=805,y=350,w=930,h=370;for(let i=0;i<5;i++)line(x,y+i*h/4,x+w,y+i*h/4);text('MODELED RESPONSE · ILLUSTRATIVE',x,y-36,18,C.muted);for(let k=0;k<4;k++){c.beginPath();for(let j=0;j<=150*ease(t/3);j++){const p=j/150,xx=x+w*p,yy=y+70+110*p+(k-1.5)*140*Math.max(0,p-.45)+8*Math.sin(p*16+k);j?c.lineTo(xx,yy):c.moveTo(xx,yy);}c.strokeStyle=colors[k];c.lineWidth=4;c.stroke();text(names[k],x+(k%2)*470,y+h+55+Math.floor(k/2)*40,24,colors[k]);}line(x+w*.45,y,x+w*.45,y+h,C.muted,1);text('shared evidence cutoff',x+w*.45,y+h+20,18,C.muted,'Segoe UI',400,'center');}
+function graph(s,t,b){const x=750,y=240,w=1080,h=630;rect(x,y,w,h,'#ffffff',C.line,24);
+ if(s.mode==='intro'){
+  for(let i=0;i<3;i++){c.beginPath();c.ellipse(1285,510,160+i*60,105+i*42,t*.035+i*.6,0,Math.PI*2);c.strokeStyle=['#d7e5c3','#b7cf9e','#85ad84'][i];c.lineWidth=2;c.stroke();const a=t*.4+i*2;dot(1285+Math.cos(a)*(160+i*60),510+Math.sin(a)*(105+i*42),8,colors[i]);}
+  text('RENALIS',1290,525,65,C.ink,'Georgia',400,'center');text('A clearer next evidence question',1290,625,27,C.muted,'Segoe UI',400,'center');
+ }else if(['pressure','families'].includes(s.mode))plot(t);
+ else if(['posterior','information','mae','checks'].includes(s.mode)||(s.mode==='policy'&&s.figures)){
+  const vals=s.figures||(s.mode==='checks'?[50,5,40]:[24.9,25,25,25.1]);
+  const labels=s.mode==='mae'?['Persistence','Dynamic','+ demographics','+ history']:s.mode==='information'?['RBV','CO +5 min','Cuff now']:s.mode==='policy'&&s.figures?['No observation','Fixed cuff','Information','Decision value']:s.mode==='posterior'?['Cardiac','Volume','Other']:s.mode==='checks'?['Backend tests','Responsive widths','Film scenes']:names;
+  const max=Math.max(...vals)*1.15;const min=0;
+  text(s.mode==='mae'?'MAE · mmHg · LOWER IS BETTER':s.mode==='information'?'EXPECTED PAIR INFORMATION · bits':s.mode==='policy'?'INDEPENDENT REGRET · LOWER IS BETTER':s.mode==='checks'?'VERIFIED IMPLEMENTATION CHECKS':'RELATIVE MODEL SUPPORT · %',800,310,21,C.muted);
+  for(let i=0;i<vals.length;i++){const yy=385+i*108;const p=ease((t-.5-i*.2)/1.5);text(labels[i]||names[i],800,yy,25,C.ink);rect(800,yy+20,880,24,'#edf1e6',null,12);rect(800,yy+20,Math.max(3,880*(vals[i]-min)/(max-min)*p),24,colors[i%4],null,12);text(Number(vals[i].toFixed(s.mode==='information'?5:s.mode==='mae'?3:2)).toString(),1740,yy+35,30,colors[i%4],'Georgia',400,'right');}
+ }else if(s.mode==='ranges'){
+  text('NOISY PREDICTIVE RANGES',810,320,22,C.muted);const vals=[[81.253,83.874,86.403],[84.398,87.813,90.534]];const scale=v=>830+(v-80)/12*870;
+  for(let i=0;i<2;i++){let yy=450+i*175;const color=i?C.cardiac:C.volume;text(i?'Cardiac response':'Volume / refill',810,yy-35,28,color);rect(830,yy,870,20,'#edf1e8');rect(scale(vals[i][0]),yy,Math.max(2,(scale(vals[i][2])-scale(vals[i][0]))*ease(t/2)),20,color);line(scale(vals[i][1]),yy-10,scale(vals[i][1]),yy+33,color,4);text(`${vals[i][0].toFixed(2)} – ${vals[i][2].toFixed(2)}%`,810,yy+80,26,color);}
+  text('10th–90th ranges overlap; a result may remain ambiguous.',810,815,23,C.muted);
+ }else if(s.mode==='physiology'||s.mode==='transport'){
+  node('Tissue fluid',800,345,285);node('Circulating volume',1225,345,500);arrow(1090,395,1210,395,t);
+  node(s.mode==='transport'?'Intake / residual output':'Cardiac response',800,605,390);node(s.mode==='transport'?'Future fluid state':'BP response',1370,605,355);arrow(1470,460,1470,585,t,C.cardiac);arrow(1210,655,1350,655,t,C.vascular);
+  text('Estimated states + explicitly authored relationships',810,815,23,C.muted);
+ }else if(s.mode==='history'){
+  const vals=[.82,.77,.81,.75,.79,.76];text('PRECEDING COMPLETED SESSIONS',805,330,22,C.muted);for(let i=0;i<6;i++){const ht=vals[i]*330*ease((t-i*.15)/2);rect(815+i*150,720-ht,96,ht,colors[i%4]);text(`S${i+1}`,862+i*150,762,23,C.muted,'Segoe UI',400,'center');}text('Fit → shrink toward population → retain uncertainty',805,820,24,C.ink);
+ }else if(s.mode==='comparison'){
+  node('Information\nWhich explanations separate?',800,340,440,240,'#e5eee1');node('Decision value\nDoes the modeled choice improve?',1280,340,440,240,'#ece8f1');arrow(1000,630,1560,630,t);wrap('Different objectives. Costs are not converted into bits.',810,735,890,32,C.muted);
+ }else{
+  const labels=({architecture:['Available records','Model + learner','Reviewable output'],journey:['Learn / understand','Compare / ask','Review / verify'],workflow:['Observe','Compare','Measure / reassess'],planner:['Current posterior','Possible noisy readings','Next feasible channel'],outcomes:['Lower reading','Middle reading','Higher reading'],policy:['192 cases / eight regimes','Independent scoring futures','Shared acquisition budget'],resources:['Equipment','Noise / latency','Failure / availability'],audit:['Observation','Append-only ledger','Immutable report'],observed:['Audit the cohort','Disjoint patient splits','Evaluate + disclose limits'],guards:['Inspect the evidence','Check authority','Withhold if unsupported'],fhir:['Patient','Device','BP Observation'],package:['Source + license','Architecture + slides','Video + public links'],next:['Predeclare protocol','Acquire matched evidence','Evaluate externally']})[s.mode]||['Current evidence','Computed reasoning','Inspect the result'];
+  for(let i=0;i<3;i++){let yy=330+i*170;rect(820,yy,910,112,i===b?'#e0ecd6':'#f0f3ea',C.line,18);dot(865,yy+56,18,i===b?C.volume:'#b9cbb0');text(String(i+1),865,yy+64,23,'white','Segoe UI',600,'center');wrap(labels[i],910,yy+67,770,30,C.ink);if(i<2)arrow(1275,yy+122,1275,yy+158,t);}
+ }
+}
+function drawScene(s,local,global){
+ c.fillStyle=C.paper;c.fillRect(0,0,1920,1080);grid(global);
+ text('RENALIS',80,62,25,C.ink,'Georgia');text(`TEAM SIGMOID  /  ${String(s.chapter).padStart(2,'0')}  ${chapterNames[s.chapter-1]}`,300,62,18,C.muted);
+ const mm=String(Math.floor(global/60)).padStart(2,'0'),ss=String(Math.floor(global%60)).padStart(2,'0');text(`${mm}:${ss} / 20:00`,1840,62,20,C.muted,'Consolas',400,'right');line(80,88,1840,88);
+ wrap(s.title,80,166,1760,51,C.ink,'Georgia',400,1.1);
+ const beats=s.beats||s.points.map((screen,i)=>({start:i*10,duration:8,screen}));let b=0;for(let i=0;i<beats.length;i++)if(local>=beats[i].start)b=i;
+ for(let i=0;i<3;i++){let y=280+i*172;const active=i===b;const p=ease((local-(beats[i]?.start||0)+.4)/.7);c.save();c.globalAlpha=i<=b?1:.40;rect(80,y,605,145,active?'#e3ecd9':'#edf1e7',active?'#b7caaa':null,18);text(`0${i+1}`,104,y+35,18,active?C.volume:C.muted,'Consolas');wrap(s.points[i],104,y+78,555,29,active?C.ink:C.muted,'Segoe UI',active?500:400);if(active)rect(80,y+137,605*clamp((local-beats[i].start)/(beats[i].duration||8)),5,C.volume,null,3);c.restore();}
+ graph(s,local,b);
+ if(s.clip&&posters[s.clip]){
+  const p=ease((local-8)/.6);if(p>0){c.save();c.globalAlpha=p;rect(748,236,1088,636,'#fff',C.line,18);c.drawImage(posters[s.clip],752,240,1080,608);rect(752,848,1080,34,C.ink,null,0);text('ACTUAL INTERFACE · ISOLATED SYNTHETIC DEMONSTRATION',770,872,16,'#dbe8ce');c.restore();}
+ }
+ text(`SCENE ${s.id} / 40`,80,890,18,C.muted,'Consolas');text('Research prototype · synthetic patient streams · no treatment commands',1840,920,19,C.muted,'Segoe UI',400,'right');
+ rect(0,946,1920,134,C.ink,null,0);
+ const cue=captions.find(v=>global>=v.start&&global<v.end);
+ if(cue)wrap(cue.text,110,998,1700,35,'#f1f6e7','Segoe UI',500,1.3);
+ else text(local>27?'Take a moment to inspect the example.':'Follow the available evidence.',110,1018,26,'#b9cdb0');
+ rect(0,1074,1920*clamp(global/1200),6,C.sage,null,0);
+}
+window.renderFrame=(time)=>{const global=clamp(time,0,1199.999),index=Math.floor(global/30),s=scenes[index];drawScene(s,global-s.start,global);const transition=(global%30);if(index>0&&transition<.4){c.save();c.globalAlpha=1-ease(transition/.4);drawScene(scenes[index-1],29.999,global-.001);c.restore();}return true;};
+window.encodeFrame=(time)=>{window.renderFrame(time);return canvas.toDataURL('image/jpeg',.9).split(',')[1];};
+window.audit=()=>({scenes:scenes.length,width:1920,height:1080,errors});
+(async()=>{try{
+ const r=await fetch('/artifacts/submission-v05/timeline.json');scenes=r.ok?await r.json():await(await fetch('/video/submission_v05/story.json')).json();
+ if(scenes.length!==40)scenes=await(await fetch('/video/submission_v05/story.json')).json();
+ const cap=await fetch('/artifacts/submission-v05/captions.json');if(cap.ok)captions=await cap.json();
+ await Promise.all([...new Set(scenes.map(s=>s.clip).filter(Boolean))].map(async key=>{const im=new Image();im.src=`/artifacts/submission-v05/screen-${key}.png`;try{await im.decode();posters[key]=im;}catch{}}));
+ window.renderFrame(0);window.__ready=true;
+ }catch(e){errors.push(e.message);throw e;}})();
+</script></body></html>

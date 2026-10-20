@@ -1,0 +1,4 @@
+# Isolated optional narration environment; keep out of the app's .venv.
+kokoro-onnx==0.4.9
+soundfile==0.14.0
+imageio-ffmpeg==0.6.0

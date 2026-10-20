@@ -1,0 +1,200 @@
+{
+  "status": "evaluated",
+  "version": "observed-evaluation/0.4",
+  "protocol": {
+    "version": "observed-evaluation/0.4",
+    "endpoint": "Next distinct measured SBP <=90; current SBP >90; elapsed gap 5-35 minutes",
+    "split_seed": 42,
+    "calibration_seed": 43,
+    "max_fit_rows": 100000,
+    "bootstrap_seed": 2040,
+    "bootstrap_replicates": 300,
+    "threshold_target_recall": 0.75,
+    "alarm_refractory_minutes": 30,
+    "session_clock_offset_hours": 8,
+    "max_elapsed_discrepancy_minutes": 20,
+    "clock_offset_status": "Empirical cross-table alignment assumption; source timezone semantics need independent confirmation",
+    "history": "Only aggregates of sessions completed before the current session begins",
+    "uf_conversion": "HEMOBP publication reports L/h; canonical rate_ml_h = uf * 1000",
+    "forbidden_inputs": [
+      "current session weightend",
+      "current session future BP",
+      "current session future settings",
+      "current session outcome summaries"
+    ]
+  },
+  "audit": {
+    "input_machine_rows": 4366298,
+    "session_table_rows": 165986,
+    "usable_session_intervals": 165513,
+    "ambiguous_overlapping_intervals_excluded": 14,
+    "matched_machine_rows": 2516989,
+    "unmatched_or_outside_interval_rows": 1849309,
+    "distinct_bp_readings": 1040958,
+    "eligible_windows": 312317,
+    "uf_source_unit": "L/h",
+    "uf_canonical_unit": "mL/h",
+    "uf_conversion_factor": 1000,
+    "rate_range_ml_h": [
+      0.0,
+      3000.0
+    ],
+    "session_clock_offset_hours": 8,
+    "median_elapsed_discrepancy_minutes": 0.4,
+    "clock_offset_status": "Empirical cross-table alignment assumption; source timezone semantics need independent confirmation",
+    "current_session_end_fields_excluded": true,
+    "history_end_before_current_start": true,
+    "checksums": "All three versioned deposit files verified"
+  },
+  "split": {
+    "fit_patients": 563,
+    "calibration_patients": 141,
+    "test_patients": 176,
+    "patient_overlap": 0,
+    "manifest_sha256": "871a8769977ca24de7967df37972266f80272dbafd0e6aef3a46edc01d3c2584"
+  },
+  "test_rows": 61947,
+  "test_sessions": 18420,
+  "models": [
+    {
+      "label": "Last observed BP",
+      "mae_mm_hg": 12.194
+    },
+    {
+      "label": "Dynamic only",
+      "mae_mm_hg": 11.356
+    },
+    {
+      "label": "Demographics + dynamic",
+      "mae_mm_hg": 11.328
+    },
+    {
+      "label": "Preceding sessions + dynamic",
+      "mae_mm_hg": 11.161
+    }
+  ],
+  "history_increment": {
+    "paired_mae_delta_mm_hg": -0.1665,
+    "patient_cluster_95_interval": [
+      -0.2298,
+      -0.1099
+    ],
+    "negative_is_better": true
+  },
+  "interval": {
+    "method": "Held-out calibration absolute-residual quantile; marginal empirical range, no conditional guarantee",
+    "nominal": 0.9,
+    "half_width_mm_hg": 21.23,
+    "test_coverage": 0.8674
+  },
+  "event_model": {
+    "windows": 61947,
+    "positive_windows": 1595,
+    "sensitivity": 0.6125,
+    "ppv": 0.1351,
+    "false_positive_windows": 6255,
+    "threshold": 0.06423885556187776,
+    "brier_score": 0.02285,
+    "pr_auc": 0.1793,
+    "calibration_bins": [
+      {
+        "lower": 0.0,
+        "upper": 0.1,
+        "count": 57279,
+        "mean_score": 0.013,
+        "event_frequency": 0.0143
+      },
+      {
+        "lower": 0.1,
+        "upper": 0.2,
+        "count": 3166,
+        "mean_score": 0.1407,
+        "event_frequency": 0.1276
+      },
+      {
+        "lower": 0.2,
+        "upper": 0.3,
+        "count": 995,
+        "mean_score": 0.2417,
+        "event_frequency": 0.2251
+      },
+      {
+        "lower": 0.3,
+        "upper": 0.4,
+        "count": 342,
+        "mean_score": 0.3408,
+        "event_frequency": 0.2515
+      },
+      {
+        "lower": 0.4,
+        "upper": 0.5,
+        "count": 123,
+        "mean_score": 0.447,
+        "event_frequency": 0.3659
+      },
+      {
+        "lower": 0.5,
+        "upper": 0.6,
+        "count": 40,
+        "mean_score": 0.5377,
+        "event_frequency": 0.45
+      },
+      {
+        "lower": 0.6,
+        "upper": 0.7,
+        "count": 2,
+        "mean_score": 0.62,
+        "event_frequency": 0.5
+      },
+      {
+        "lower": 0.7,
+        "upper": 0.8,
+        "count": 0,
+        "mean_score": null,
+        "event_frequency": null
+      },
+      {
+        "lower": 0.8,
+        "upper": 0.9,
+        "count": 0,
+        "mean_score": null,
+        "event_frequency": null
+      },
+      {
+        "lower": 0.9,
+        "upper": 1.0,
+        "count": 0,
+        "mean_score": null,
+        "event_frequency": null
+      }
+    ],
+    "by_event_context": {
+      "first_event_context": {
+        "windows": 57098,
+        "positive_windows": 1086,
+        "sensitivity": 0.5046,
+        "ppv": 0.1152,
+        "false_positive_windows": 4209
+      },
+      "recurrence_context": {
+        "windows": 4849,
+        "positive_windows": 509,
+        "sensitivity": 0.8428,
+        "ppv": 0.1733,
+        "false_positive_windows": 2046
+      }
+    },
+    "consolidated_alerts": 5205,
+    "consolidated_ppv": 0.1406,
+    "alerts_per_eligible_session": 0.2826,
+    "alarm_definition": "Earliest positive window per 30-minute refractory interval within an authoritative session; next-distinct-reading PPV, not continuous-event sensitivity"
+  },
+  "limitations": [
+    "Retrospective Taiwan deposit, not Indian or prospective validation.",
+    "Measured next-distinct-reading endpoint differs from anytime-within-30-minute model crossings.",
+    "Session table intervals improve identity but unmatched and overlapping records are excluded; temporal availability of source metadata remains a source assumption.",
+    "Prior completed-session aggregates are predictive associations, not causal intervention effects.",
+    "Marginal calibration and residual coverage need external transport validation.",
+    "Old v0.3 results use a different cohort and model protocol; do not directly rank release scores."
+  ]
+}

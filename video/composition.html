@@ -1,0 +1,438 @@
+<!doctype html>
+<html lang="en"><head><meta charset="utf-8"><title>RENALIS / Motion film v2</title>
+<style>html,body{margin:0;overflow:hidden;background:#143c2d}canvas{display:block;width:1920px;height:1080px}</style></head>
+<body><canvas id="film" width="1920" height="1080"></canvas><script>
+'use strict';
+const canvas=document.querySelector('canvas');
+let ctx=canvas.getContext('2d',{alpha:false});
+const main=ctx,previousCanvas=document.createElement('canvas');
+previousCanvas.width=1920;previousCanvas.height=1080;
+const previous=previousCanvas.getContext('2d',{alpha:false});
+const C={paper:'#f4f5ec',ink:'#183e2d',muted:'#61765a',line:'#d0ddc4',sage:'#bed6a0',forest:'#153c2d',
+  volume:'#3a805e',vascular:'#a77145',cardiac:'#8270a0',white:'#ffffff',amber:'#926a39'};
+const familyColors=[C.volume,C.vascular,C.cardiac];
+const familyNames=['Volume / refill','Vascular compensation','Cardiac response'];
+const clamp=(x,a=0,b=1)=>Math.max(a,Math.min(b,x));
+const ease=x=>{x=clamp(x);return x*x*(3-2*x)};
+const ramp=(t,start,d=.8)=>ease((t-start)/d);
+const lerp=(a,b,p)=>a+(b-a)*clamp(p);
+let timeline,meta,assets={},audit={};
+let checking=false;
+function rect(x,y,w,h,fill,stroke=null,r=18){
+  ctx.beginPath();ctx.roundRect(x,y,w,h,r);ctx.fillStyle=fill;ctx.fill();
+  if(stroke){ctx.strokeStyle=stroke;ctx.lineWidth=1.5;ctx.stroke();}
+}
+function text(value,x,y,size=26,color=C.ink,font='Segoe UI',weight=400,align='left'){
+  value=String(value);ctx.font=`${weight} ${size}px ${font}`;ctx.textAlign=align;ctx.textBaseline='alphabetic';
+  const m=ctx.measureText(value),left=align==='center'?x-m.width/2:align==='right'?x-m.width:x;
+  if(checking&&ctx.globalAlpha>.04&&value.trim()){
+    const top=y-(m.actualBoundingBoxAscent||size),bottom=y+(m.actualBoundingBoxDescent||0);
+    audit.text.push({text:value,x:left,y:top,right:left+m.width,bottom,size});
+    if(left<64||left+m.width>1856||top<30||bottom>1068)audit.errors.push('Text outside safe frame: '+value);
+  }
+  ctx.fillStyle=color;ctx.fillText(value,x,y);
+}
+function lines(value,x,y,width,size=26,color=C.muted,gap=1.45,font='Segoe UI',weight=400,align='left'){
+  ctx.font=`${weight} ${size}px ${font}`;
+  const paragraphs=String(value).split('\n');let row=0;
+  for(const paragraph of paragraphs){
+    let current='';
+    for(const word of paragraph.split(/\s+/)){
+      const next=current?current+' '+word:word;
+      if(ctx.measureText(next).width>width&&current){text(current,x,y+row*size*gap,size,color,font,weight,align);row++;current=word;}
+      else current=next;
+    }
+    if(current){text(current,x,y+row*size*gap,size,color,font,weight,align);row++;}
+  }
+  return row*size*gap;
+}
+function rule(x,y,x2,y2,color=C.line,w=1.5){ctx.beginPath();ctx.moveTo(x,y);ctx.lineTo(x2,y2);ctx.strokeStyle=color;ctx.lineWidth=w;ctx.stroke();}
+function dot(x,y,r,color){ctx.beginPath();ctx.arc(x,y,r,0,Math.PI*2);ctx.fillStyle=color;ctx.fill();}
+function pill(label,x,y,w,color=C.ink,bg='#e7eddd'){
+  rect(x,y,w,43,bg,null,22);text(label,x+w/2,y+28,18,color,'Segoe UI',500,'center');
+}
+function fade(t,start,draw,d=.65){ctx.save();ctx.globalAlpha*=ramp(t,start,d);draw();ctx.restore();}
+function headline(value,x,y,size,t,start=0,color=C.ink){
+  fade(t,start,()=>String(value).split('\n').forEach((s,i)=>text(s,x,y+i*size*1.16,size,color,'Georgia')));
+}
+function arrow(x,y,x2,y2,color=C.muted,width=2){
+  rule(x,y,x2,y2,color,width);const a=Math.atan2(y2-y,x2-x);
+  rule(x2,y2,x2-12*Math.cos(a-.5),y2-12*Math.sin(a-.5),color,width);
+  rule(x2,y2,x2-12*Math.cos(a+.5),y2-12*Math.sin(a+.5),color,width);
+}
+function flow(x,y,x2,y2,t,color=C.sage,count=5){
+  rule(x,y,x2,y2,color,1.5);
+  for(let i=0;i<count;i++){const p=(t*.12+i/count)%1;dot(lerp(x,x2,p),lerp(y,y2,p),3.5,color);}
+}
+function ring(x,y,r,p,color,w=3){ctx.beginPath();ctx.arc(x,y,r,-Math.PI/2,-Math.PI/2+Math.PI*2*clamp(p));ctx.strokeStyle=color;ctx.lineWidth=w;ctx.lineCap='round';ctx.stroke();}
+function getBeat(s,t){return Math.max(0,s.beats.findLastIndex(b=>t>=b.local_start-.18));}
+function activeBeat(s,t){return s.beats[getBeat(s,t)];}
+function beatTime(s,key,t){return t-(s.beats.find(b=>b.key===key)?.local_start??0);}
+function background(s,t,dark=false){
+  ctx.fillStyle=dark?C.forest:C.paper;ctx.fillRect(0,0,1920,1080);
+  const g=ctx.createRadialGradient(1550,290,0,1450,300,1000);
+  g.addColorStop(0,dark?'#6d8a4940':'#dbe7c955');g.addColorStop(1,'#00000000');
+  ctx.fillStyle=g;ctx.fillRect(0,0,1920,1080);
+  ctx.save();ctx.globalAlpha=dark?.13:.18;
+  for(let x=100;x<1850;x+=60)for(let y=150;y<880;y+=60)dot(x,y,.75,dark?'#aac28c':'#b4c699');
+  ctx.restore();
+  rect(104,48,38,43,dark?'#294c37':'#e4edda',dark?'#658050':'#becfaa',11);
+  ctx.beginPath();ctx.moveTo(123,57);ctx.bezierCurveTo(107,74,114,84,123,82);ctx.bezierCurveTo(138,81,132,68,123,57);
+  ctx.strokeStyle=dark?'#c2daa2':'#668d48';ctx.lineWidth=1.8;ctx.stroke();
+  text('R E N A L I S',160,79,21,dark?'#e0ebd1':C.ink,'Segoe UI',500);
+  text(s.chapter,1816,78,15,dark?'#b6c99e':C.muted,'Segoe UI',500,'right');
+  rule(104,113,1816,113,dark?'#6c875344':C.line);
+}
+function title(s,t,dark=false){headline(s.title,108,199,53,t,.1,dark?'#edf2e5':C.ink);}
+function concept(s,t,dark=false){
+  const b=activeBeat(s,t);
+  rect(104,892,1712,75,dark?'#ffffff0a':'#e6ecdc',dark?'#69864f55':null,13);
+  const i=getBeat(s,t);pill(String(i+1).padStart(2,'0'),121,908,54,dark?'#d9e8c7':C.ink,dark?'#3d5e3c':'#d3dfc4');
+  lines(b.screen,201,924,1565,23,dark?'#dce9ca':'#41603a',1.25);
+  text('SYNTHETIC RESEARCH DEMONSTRATION',108,987,13,dark?'#b4c79d':'#6e865c','Segoe UI',500);
+  text('Concept '+(i+1)+' / '+s.beats.length,1816,987,13,dark?'#b4c79d':'#6e865c','Segoe UI',400,'right');
+  audit.concept=b.key;audit.screen=b.screen;
+}
+// All captured product panels use contain. No scroll offset or source crop.
+function panel(key,x,y,w,h,label,t=1){
+  const image=assets[key];if(!image)throw Error('Missing complete panel: '+key);
+  const head=43,pad=17;
+  rect(x,y,w,h,'#ffffff','#c8d7b9',16);
+  rect(x+1,y+1,w-2,head,'#e9efdf',null,15);
+  [0,1,2].forEach(i=>dot(x+21+i*14,y+21,3.6,['#afc694','#c5d2b1','#9db77c'][i]));
+  text(label,x+83,y+28,15,'#637e51');
+  const availableW=w-pad*2,availableH=h-head-pad*2,scale=Math.min(availableW/image.naturalWidth,availableH/image.naturalHeight);
+  const iw=image.naturalWidth*scale,ih=image.naturalHeight*scale;
+  const ix=x+(w-iw)/2,iy=y+head+pad+(availableH-ih)/2;
+  ctx.drawImage(image,ix,iy,iw,ih);
+  audit.media.push({key,mode:'contain',source:[image.naturalWidth,image.naturalHeight],destination:[ix,iy,iw,ih],bounds:[x,y,w,h]});
+}
+function pointLabel(label,x,y,w,active,color=C.volume){
+  rect(x,y,w,66,active?'#fffef8':'#eaf0e2',active?color:'#cfdbc3',12);
+  dot(x+24,y+33,5,active?color:'#b4c6a0');text(label,x+45,y+42,24,active?C.ink:C.muted);
+}
+function liquid(x,y,w,h,level,color,t,label){
+  rect(x,y,w,h,'#ffffff44','#aabf98',20);
+  ctx.save();ctx.beginPath();ctx.roundRect(x+2,y+2,w-4,h-4,18);ctx.clip();
+  const at=y+h*(1-level);ctx.beginPath();ctx.moveTo(x,y+h);ctx.lineTo(x,at);
+  for(let a=0;a<=w;a+=3)ctx.lineTo(x+a,at+Math.sin(a*.04+t*1.7)*4);
+  ctx.lineTo(x+w,y+h);ctx.closePath();ctx.fillStyle=color;ctx.fill();ctx.restore();
+  text(label,x+w/2,y+h+39,22,C.muted,'Segoe UI',400,'center');
+}
+function drawQuestion(s,t){
+  background(s,t,true);const i=getBeat(s,t);
+  headline('One number.',110,293,89,t,.1,'#e8efdc');
+  headline('95.9',107,523,211,t,.35,'#d4e7b9');
+  text('mmHg',592,500,31,'#b8cc9e');
+  text('Synthetic systolic BP · minute 90',119,580,24,'#b8cc9e');
+  fade(t,.7,()=>{rule(130,690,750,690,'#85a36b',2);for(let j=0;j<7;j++)dot(130+j*100,652+j*6,4,'#c1d7a2');});
+  headline(i?'What should we\nmeasure next?':'A falling reading\nleaves a question.',112,752,53,t,.8,'#e0ebd1');
+  const labels=['Volume / refill?','Vascular compensation?','Cardiac response?'];
+  labels.forEach((label,j)=>fade(t,.7+j*.22,()=>{
+    const yy=294+j*176;flow(830,490,1124,yy+42,t+j,['#9cc781','#d0a47b','#baa6d5'][j],3);
+    rect(1130,yy,660,100,'#ffffff08','#6d88594d');
+    dot(1165,yy+49,6,['#9cc781','#d0a47b','#baa6d5'][j]);text(label,1194,yy+61,31,'#e1ebd0','Georgia');
+  }));
+  concept(s,t,true);
+}
+function drawIntroduce(s,t){
+  background(s,t);headline('RENALIS',109,327,102,t,.15);
+  headline('A clearer\nnext question.',114,438,70,t,.45,'#6d8857');
+  lines('Dialysis digital twin\nResearch prototype',120,666,575,30,C.muted,1.5);
+  fade(t,.65,()=>panel('landing--hero',755,243,1055,565,'Actual RENALIS introduction'));
+  const a=getBeat(s,t);
+  ['One patient','Possible explanations','Inspectable evidence'].forEach((l,j)=>{
+    const x=755+j*356;pointLabel(l,x,817,340,a===1,C.volume);
+  });
+  concept(s,t);
+}
+function drawPatient(s,t){
+  background(s,t);title(s,t);
+  rect(112,267,540,561,'#e8efdc','#cbdcba',24);
+  dot(381,373,67,'#d4e2be');text('M',381,394,61,'#74944e','Georgia',400,'center');
+  text('Meera',381,521,70,C.ink,'Georgia',400,'center');
+  text('RNL-014 · Fictional patient',381,573,25,C.muted,'Segoe UI',400,'center');
+  pill('Minute 90 / synthetic session',161,650,442);
+  lines('One patient.\nOne available replay cutoff.',166,749,425,27,C.muted,1.45);
+  panel('workspace--balance',714,272,1095,555,'Actual patient twin / estimated fluid state');
+  concept(s,t);
+}
+function drawFusion(s,t){
+  background(s,t);title(s,t);const i=getBeat(s,t);
+  rect(112,278,478,213,i===0?'#fffef7':'#ebf0e3',i===0?C.volume:C.line);
+  text('01 / HISTORICAL PRIORS',145,321,18,C.muted,'Segoe UI',500);
+  lines('Starting assumptions',145,373,412,33,C.ink,1.3,'Georgia');
+  lines('Baseline · refill prior\nReference volume · fluid target',145,424,407,24,C.muted,1.5);
+  rect(112,548,478,213,i===1?'#fffef7':'#ebf0e3',i===1?C.volume:C.line);
+  text('02 / AVAILABLE OBSERVATIONS',145,590,18,C.muted,'Segoe UI',500);
+  text('BP + machine replay',145,643,33,C.ink,'Georgia');
+  lines('Valid readings · removal\nTime stamped availability',145,691,407,24,C.muted,1.5);
+  flow(590,386,834,519,t,'#8fae70');flow(590,656,834,519,t+1,'#8fae70');
+  dot(952,519,112,'#deebcd');ring(952,519,132,.7,'#89a965',2);
+  text('Availability',952,505,28,C.ink,'Georgia',400,'center');text('gate',952,545,34,C.ink,'Georgia',400,'center');
+  flow(1067,519,1199,519,t,'#8fae70',3);
+  rect(1205,277,602,485,'#ffffff70',C.line,22);
+  text('ESTIMATED FLUID STATE',1506,322,20,C.muted,'Segoe UI',500,'center');
+  liquid(1288,375,153,231,.65,'#adbdc3',t,'Tissue excess');
+  liquid(1574,375,153,231,.75,'#84aa7e',t,'Circulating volume');
+  text('Updates as evidence arrives',1506,721,25,C.muted,'Georgia',400,'center');
+  if(i===2){rect(696,790,1110,66,'#f1e9d9','#d2b792',12);text('Replay cutoff: minute 90',728,833,25,C.amber);
+    rule(1115,805,1115,844,'#c5a879');text('Future observations excluded',1145,833,24,C.amber);}
+  concept(s,t);
+}
+function drawFutures(s,t){
+  background(s,t);title(s,t);const i=getBeat(s,t);
+  pointLabel('Shared estimated state',111,249,483,true);
+  arrow(622,281,747,281,'#93ac78');
+  pointLabel('Hypothetical removal profile',780,249,603,true);
+  pill('No machine command',1450,260,355,C.muted);
+  panel('workspace-alternative--chart',112,352,1115,479,'Actual patient twin / hypothetical pressure forecast');
+  rect(1282,354,524,479,'#e7eedb','#c7d8b5');
+  text('THE TRADEOFF',1321,404,20,C.muted,'Segoe UI',500);
+  lines(i?'Unfinished\nfluid target':'Pressure\ntrajectory',1321,474,445,51,C.ink,1.19,'Georgia');
+  liquid(1481,613,125,117,i?.61:.35,'#9cba80',t,'Unfinished fluid');
+  concept(s,t);
+}
+function familyDiagram(i,x,y,t,active){
+  const color=familyColors[i];
+  if(i===0){
+    liquid(x+32,y+16,100,130,.7,'#bdd0b0',t,'Tissue');
+    liquid(x+270,y+16,100,130,.5,'#83ab88',t,'Circulation');
+    flow(x+140,y+69,x+261,y+69,t,color,3);text('Refill',x+200,y+109,19,C.muted,'Segoe UI',400,'center');
+    arrow(x+320,y+194,x+430,y+194,color);text('Removal',x+329,y+230,20,C.muted);
+  }else if(i===1){
+    ctx.beginPath();ctx.moveTo(x+34,y+45);ctx.bezierCurveTo(x+160,y+45,x+209,y+98,x+408,y+45);
+    ctx.moveTo(x+34,y+167);ctx.bezierCurveTo(x+160,y+167,x+209,y+115,x+408,y+167);
+    ctx.strokeStyle=color;ctx.lineWidth=7;ctx.stroke();
+    for(let k=0;k<7;k++){const p=(t*.13+k/7)%1;dot(x+40+p*365,y+107,5,color);}
+    text('Vessel response',x+222,y+231,24,C.muted,'Segoe UI',400,'center');
+  }else{
+    ctx.save();ctx.translate(x+217,y+107);const pulse=1+.035*Math.sin(t*6.6);ctx.scale(pulse,pulse);
+    ctx.beginPath();ctx.moveTo(0,67);ctx.bezierCurveTo(-104,5,-76,-80,-20,-38);ctx.bezierCurveTo(0,-22,0,-22,20,-38);
+    ctx.bezierCurveTo(76,-80,104,5,0,67);ctx.fillStyle='#d8cde3';ctx.fill();ctx.strokeStyle=color;ctx.lineWidth=3;ctx.stroke();ctx.restore();
+    rule(x+163,y+112,x+193,y+112,color,2);rule(x+193,y+112,x+207,y+83,color,2);rule(x+207,y+83,x+224,y+138,color,2);rule(x+224,y+138,x+242,y+112,color,2);rule(x+242,y+112,x+277,y+112,color,2);
+    text('Pump response',x+217,y+231,24,C.muted,'Segoe UI',400,'center');
+  }
+}
+function drawFamilies(s,t){
+  background(s,t);title(s,t);const focus=getBeat(s,t);
+  familyNames.forEach((name,i)=>{
+    const x=111+i*575,a=ramp(t,.3+i*.15);
+    fade(t,.3+i*.15,()=>{
+      rect(x,274,548,554,i===focus?'#fffdf7':'#e9eee2',i===focus?familyColors[i]:C.line,20);
+      text('0'+(i+1),x+30,320,20,familyColors[i],'Segoe UI',600);
+      lines(name,x+29,377,495,33,C.ink,1.25,'Georgia');
+      familyDiagram(i,x+40,456,t,i===focus);
+      pill(i===focus?'Examining this explanation':'Alternative stays visible',x+29,749,489,i===focus?familyColors[i]:C.muted);
+    });
+  });
+  concept(s,t);
+}
+function forecastGraph(x,y,w,h,t,branch=true){
+  const data=meta.demoResult;
+  const hist=data.observations.filter(r=>r.sbp!==null&&r.quality==='valid'&&r.minute>=60);
+  const px=m=>x+(m-60)/60*w,py=v=>y+h-(v-70)/60*h;
+  [80,100,120].forEach(v=>{rule(x,py(v),x+w,py(v),'#d5dfca');text(v,x-24,py(v)+6,20,C.muted,'Segoe UI',400,'right');});
+  ctx.setLineDash([7,9]);rule(x,py(90),x+w,py(90),'#bd9d76',1.5);rule(px(90),y,px(90),y+h,'#819b69',1.7);ctx.setLineDash([]);
+  text('90 mmHg research threshold',x+w,py(90)-14,18,'#94774f','Segoe UI',400,'right');
+  ctx.beginPath();hist.forEach((r,i)=>i?ctx.lineTo(px(r.minute),py(r.sbp)):ctx.moveTo(px(r.minute),py(r.sbp)));
+  ctx.strokeStyle='#6a8161';ctx.lineWidth=4;ctx.stroke();
+  if(branch){const p=ramp(t,0,2.1);
+    ['volume','vascular','cardiac'].forEach((key,i)=>{
+      ctx.save();ctx.beginPath();ctx.rect(px(90)-2,y-45,w/2*p+2,h+100);ctx.clip();
+      ctx.beginPath();data.trajectories.forEach((r,j)=>j?ctx.lineTo(px(r.minute),py(r[key])):ctx.moveTo(px(r.minute),py(r[key])));
+      ctx.strokeStyle=familyColors[i];ctx.lineWidth=4;ctx.stroke();ctx.restore();
+      if(p>.98){const last=data.trajectories.at(-1);dot(px(last.minute),py(last[key]),5,familyColors[i]);}
+    });
+  }
+  dot(px(90),py(hist.at(-1).sbp),6,C.ink);
+  ['Minute 60','Now · 90','Minute 120'].forEach((l,i)=>text(l,x+i*w/2,y+h+39,20,C.muted,'Segoe UI',400,i===0?'left':i===1?'center':'right'));
+}
+function drawDivergence(s,t){
+  background(s,t);title(s,t);const i=getBeat(s,t);
+  const families=meta.demoResult.families;
+  families.forEach((f,j)=>{const x=111+j*575;
+    rect(x,246,548,111,'#ffffff80',C.line,15);
+    dot(x+28,278,5,familyColors[j]);text(familyNames[j],x+45,286,25,C.ink,'Georgia');
+    text('Recent BP fit: '+f.fit_rmse_mm_hg.toFixed(2)+' mmHg RMSE',x+27,329,21,C.muted);
+  });
+  rect(112,386,1695,444,'#ffffff70',C.line,19);
+  text('AVAILABLE HISTORY',156,425,17,C.muted,'Segoe UI',500);
+  text(i?'SAME HYPOTHETICAL PROFILE · 650 mL/h':'THREE FAMILIES FIT THE RECENT HISTORY',1751,425,17,C.muted,'Segoe UI',500,'right');
+  forecastGraph(189,460,1545,287,beatTime(s,'branches',t),i===1);
+  concept(s,t);
+}
+function measurementIcon(i,x,y,t){
+  const c=familyColors[i];
+  if(i===0){ring(x,y,49,1,c,6);ring(x,y,63,.6,'#c3d2b2',2);text('BP',x,y+11,29,c,'Georgia',400,'center');dot(x+49*Math.cos(t*.5),y+49*Math.sin(t*.5),5,c);}
+  else if(i===1){liquid(x-38,y-56,76,108,.56,'#c9b296',t,'');text('%',x,y+17,32,c,'Georgia',400,'center');}
+  else{ring(x,y,52,1,c,3);const pts=[[-40,0],[-18,0],[-8,-26],[7,30],[19,0],[42,0]];ctx.beginPath();pts.forEach(([a,b],j)=>j?ctx.lineTo(x+a,y+b):ctx.moveTo(x+a,y+b));ctx.strokeStyle=c;ctx.lineWidth=3;ctx.stroke();}
+}
+function drawMeasurement(s,t){
+  background(s,t);title(s,t);const i=getBeat(s,t);
+  const candidates=meta.demoResult.measurement_candidates.filter(c=>c.offset_minutes===0);
+  const ids=['repeat_bp','relative_blood_volume','cardiac_output'];
+  ['Repeat cuff BP','Relative blood volume','Cardiac output'].forEach((label,j)=>{
+    const x=112+j*575,candidate=candidates.find(c=>c.channel===ids[j]);
+    rect(x,258,548,322,'#ffffff85',C.line,18);measurementIcon(j,x+274,356,t);
+    text(label,x+274,459,29,C.ink,'Georgia',400,'center');
+    if(i>=1){const value=candidate.decision_value;
+      text(value.toFixed(4),x+274,521,42,familyColors[j],'Georgia',400,'center');
+      text('Expected decision-loss reduction',x+274,558,18,C.muted,'Segoe UI',400,'center');}
+  });
+  if(i===0){
+    text('Three available research channels',960,676,41,C.ink,'Georgia',400,'center');
+    text('What could distinguish the explanations?',960,744,31,C.muted,'Georgia',400,'center');
+  }else if(i===1){
+    pointLabel('Possible observation',113,641,463,true);arrow(606,674,710,674);
+    pointLabel('Update model compatibility',740,641,600,true);arrow(1364,674,1454,674);
+    pointLabel('Recompare scenarios',1477,641,329,true);
+    text('Expected value is conditional on the declared model and loss.',960,787,26,C.muted,'Segoe UI',400,'center');
+  }else{
+    ['Noise','Information gain','Delay','Burden'].forEach((label,j)=>{
+      const x=113+j*432;rect(x,643,400,159,'#e5edda',null,17);
+      text(['±','Δ','◷','+'][j],x+43,708,44,C.volume,'Georgia');
+      text(label,x+38,760,28,C.ink,'Georgia');
+    });
+  }
+  concept(s,t);
+}
+function drawAcquire(s,t){
+  background(s,t);title(s,t);const i=getBeat(s,t);
+  panel('mechanisms--measure',112,250,667,598,'Actual mechanism lab / measurement');
+  rect(832,249,975,600,'#e5edda','#c6d7b3',22);
+  text('EXAMPLE / IMMEDIATE OBSERVATION',880,299,20,C.muted,'Segoe UI',500);
+  lines('Cardiac output',880,381,860,64,C.ink,1.2,'Georgia');
+  if(i===0){
+    text('0.0521',880,521,105,C.volume,'Georgia');
+    lines('Expected scenario-decision loss reduction',886,589,800,28,C.muted);
+    pill('Largest expected decision value in this example',881,727,878);
+  }else{
+    const p=ramp(beatTime(s,'observe',t),0,1.4);
+    text((3.74*p).toFixed(2),880,555,160,C.volume,'Georgia');
+    text('L/min',1278,544,40,C.muted);
+    pill('SYNTHETIC OBSERVATION',881,622,552,C.volume,'#cfdfbd');
+    lines('Labeled simulation fixture.\nReleased to the model at the current cutoff.',887,728,839,27,C.muted,1.5);
+    ring(1683,518,52,p,C.volume,4);
+  }
+  concept(s,t);
+}
+function drawUpdate(s,t){
+  background(s,t);title(s,t);const i=getBeat(s,t);
+  pill('Synthetic cardiac output · 3.74 L/min',111,240,661);
+  const p=ramp(beatTime(s,'weights',t),.12,2.4);
+  meta.measuredResult.families.forEach((f,j)=>{
+    const x=112+j*575,before=meta.demoResult.families[j].weight,value=lerp(before,f.weight,p);
+    rect(x,324,548,383,'#ffffff90',C.line,19);
+    text(familyNames[j],x+31,379,29,C.ink,'Georgia');
+    text((value*100).toFixed(1)+'%',x+28,498,89,familyColors[j],'Georgia');
+    text('Before: '+(before*100).toFixed(1)+'%',x+31,553,24,C.muted);
+    rect(x+31,597,484,12,'#e3ebd8',null,6);
+    rect(x+31,597,Math.max(1,value*484),12,familyColors[j],null,6);
+    text('Relative model compatibility',x+31,662,22,C.muted);
+  });
+  if(i===1){pill('Comparison remains unresolved',499,752,922,C.amber,'#eee4d0');
+    text('Model compatibility ≠ diagnosis probability',960,849,28,C.muted,'Segoe UI',400,'center');}
+  concept(s,t);
+}
+function drawGuardrail(s,t){
+  background(s,t);title(s,t);const i=getBeat(s,t);
+  const obsX=363;
+  rect(112,263,508,575,'#eee8d9','#d4bfa0',20);
+  ring(obsX,403,64,1,C.amber,3);text('!',obsX,429,77,C.amber,'Georgia',400,'center');
+  lines('Contradictory\nobservation',obsX,559,440,49,C.ink,1.2,'Georgia',400,'center');
+  lines('Research stress case\nOutside every modeled family',obsX,725,440,25,C.amber,1.5,'Segoe UI',400,'center');
+  familyNames.forEach((label,j)=>{
+    const yy=273+j*125;
+    rule(649,478,872,yy+43,'#bda987',1.5);
+    rect(879,yy,927,87,'#ffffff90','#d8ccb7',15);
+    text(label,909,yy+53,29,C.ink,'Georgia');
+    text('Inconsistent',1773,yy+53,24,C.amber,'Segoe UI',500,'right');
+  });
+  if(i===1){rect(879,703,927,134,'#eadcca','#c4a47d',16);
+    text('Comparison authority withheld',1342,756,34,C.amber,'Georgia',400,'center');
+    text('Scenario forecasts and rankings are withheld',1342,802,24,C.amber,'Segoe UI',400,'center');}
+  concept(s,t);
+}
+function drawEvidence(s,t){
+  background(s,t);title(s,t);const i=getBeat(s,t);
+  if(i===0){
+    rect(113,253,783,584,'#fffef7',C.line,20);text('SAVED COMPARISON REPORT',157,306,20,C.muted,'Segoe UI',500);
+    text('Original evidence',157,380,49,C.ink,'Georgia');
+    [['Patient / cutoff','Meera / minute 90'],['Observation','Synthetic CO / 3.74 L/min'],['Model settings','Preserved with the run'],['Interpretation','Unresolved comparison']].forEach(([a,b],j)=>{
+      const yy=448+j*87;rule(155,yy-23,853,yy-23,C.line);text(a,157,yy+7,22,C.muted);text(b,157,yy+43,27,C.ink);
+    });
+    text('A traceable result.',1014,412,55,C.ink,'Georgia');
+    lines('The observations and settings\nstay attached to the saved run.',1018,506,721,32,C.muted,1.6);
+    ring(1379,699,66,1,'#83a363',3);text('✓',1379,721,60,C.volume,'Segoe UI',400,'center');
+  }else{
+    const rows=[['Synthetic behavior','Does the prototype behave as specified?'],['Retrospective data','How do forecasts compare on observed data?'],['Independent challenges','Does measurement selection improve the comparison?']];
+    rows.forEach(([label,detail],j)=>{
+      const yy=264+j*187;
+      rect(113,yy,1693,153,'#ffffff80',C.line,18);pill('0'+(j+1),143,yy+39,71);
+      text(label,252,yy+63,37,C.ink,'Georgia');text(detail,252,yy+114,27,C.muted);
+    });
+  }
+  concept(s,t);
+}
+function drawLimits(s,t){
+  background(s,t,true);headline(s.title,110,223,72,t,.1,'#e4edd8');const i=getBeat(s,t);
+  [['Clinical benefit','Not established'],['Measurement-policy superiority','Not demonstrated']].forEach(([a,b],j)=>{
+    const x=113+j*864,focus=i===j;
+    rect(x,345,830,385,focus?'#ffffff0c':'#ffffff04',focus?'#b4c894':'#637d4b',20);
+    lines(a,x+38,431,750,42,'#e0ebd1',1.3,'Georgia');
+    text(b,x+38,652,41,focus?'#d9c596':'#b0c49b','Georgia');
+  });
+  text('Research prototype · inspect the assumptions and the evidence',960,826,30,'#b4c99f','Segoe UI',400,'center');
+  concept(s,t,true);
+}
+function drawClose(s,t){
+  background(s,t,true);
+  ctx.save();ctx.globalAlpha=.14;for(let j=0;j<4;j++)ring(1640,465,140+j*88,1,'#bad29d',1);ctx.restore();
+  headline('A clearer next question.',110,349,96,t,.2,'#e5eed9');
+  headline('Keep explanations visible.',113,464,73,t,.6,'#bdd6a1');
+  lines('Ask what evidence would change them.',119,594,1500,43,'#c1d5a9',1.4,'Georgia');
+  fade(t,.9,()=>{rect(119,694,1209,112,'#ffffff07','#819b62',17);
+    text('Explore the twin. Inspect the evidence.',722,764,36,'#e1ecd2','Georgia',400,'center');});
+  concept(s,t,true);
+}
+const draws={question:drawQuestion,introduce:drawIntroduce,patient:drawPatient,fusion:drawFusion,
+  futures:drawFutures,families:drawFamilies,divergence:drawDivergence,measurement:drawMeasurement,
+  acquire:drawAcquire,update:drawUpdate,guardrail:drawGuardrail,evidence:drawEvidence,limits:drawLimits,close:drawClose};
+function captions(seconds){
+  const c=timeline.captions.find(c=>seconds>=c.start&&seconds<c.end+.035);
+  if(!c)return;
+  rect(104,1005,1712,62,'#0c2e23ed',null,11);
+  lines(c.text,960,1044,1622,25,'#f4f6ec',1.15,'Segoe UI',400,'center');
+  audit.caption=c.text;
+}
+window.renderFrame=(seconds,options={})=>{
+  checking=!!options.audit;audit={errors:[],text:[],media:[],concept:null,caption:null};
+  seconds=clamp(seconds,0,timeline.duration-.00001);
+  const s=timeline.scenes.find(s=>seconds>=s.start&&seconds<s.start+s.duration)||timeline.scenes.at(-1);
+  const index=timeline.scenes.indexOf(s),t=seconds-s.start;
+  ctx=main;ctx.setTransform(1,0,0,1,0,0);ctx.globalAlpha=1;draws[s.id](s,t);
+  // Crossfade only before speech starts. Narrated concepts never dissolve away.
+  if(t<.42&&index>0){
+    const keep=audit,priorChecking=checking;checking=false;ctx=previous;
+    const p=timeline.scenes[index-1];ctx.setTransform(1,0,0,1,0,0);ctx.globalAlpha=1;draws[p.id](p,p.duration-.01);
+    ctx=main;ctx.globalAlpha=1-ease(t/.42);ctx.drawImage(previousCanvas,0,0);ctx.globalAlpha=1;
+    audit=keep;checking=priorChecking;
+  }
+  captions(seconds);
+  ctx.fillStyle='#92b36b';ctx.fillRect(0,1076,1920*seconds/timeline.duration,4);
+  audit.scene=s.id;audit.time=seconds;window.filmAudit=audit;
+  return audit;
+};
+(async()=>{
+  [timeline,meta]=await Promise.all([
+    fetch('/artifacts/video/timeline.json').then(r=>r.json()),
+    fetch('/artifacts/video/assets/capture.json').then(r=>r.json())
+  ]);
+  await Promise.all(['landing--hero','workspace--balance','workspace-alternative--chart','mechanisms--measure'].map(key=>new Promise((resolve,reject)=>{
+    const im=new Image();im.onload=()=>{assets[key]=im;resolve()};im.onerror=()=>reject(Error(key));
+    im.src='/artifacts/video/assets/'+key+'.png';
+  })));
+  await document.fonts.ready;window.__ready=true;window.filmTimeline=timeline;window.renderFrame(0);
+})();
+</script></body></html>
