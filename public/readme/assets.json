@@ -1,0 +1,26 @@
+{
+  "purpose": "Optimized README images. Proportions retained, no content retouching.",
+  "source_provenance": "../presentation-assets/provenance.json",
+  "images": [
+    {
+      "file": "renalis-cover.webp",
+      "source": "../presentation-assets/presentation-cover.png"
+    },
+    {
+      "file": "workspace.webp",
+      "source": "../presentation-assets/interface-workspace.png"
+    },
+    {
+      "file": "adaptive-planner.webp",
+      "source": "../presentation-assets/interface-after-co.png"
+    },
+    {
+      "file": "acquired-result.webp",
+      "source": "../presentation-assets/interface-acquire-rbv.png"
+    },
+    {
+      "file": "architecture.webp",
+      "source": "../presentation-assets/architecture-overview.png"
+    }
+  ]
+}
