@@ -64,10 +64,10 @@ def demo_example():
 
 
 PROJECT_DOCUMENTS={
-    'architecture-pdf':('Architecture with adaptive evidence planning','output/pdf/RENALIS_Architecture_v05.pdf','PDF','application/pdf'),
-    'architecture-pptx':('Editable submission architecture','output/presentations/RENALIS_Architecture_v05_Release_Final.pptx','PPTX','application/vnd.openxmlformats-officedocument.presentationml.presentation'),
-    'presentation-pdf':('Submission presentation and actual outcomes','output/pdf/RENALIS_Project_Presentation_v05.pdf','PDF','application/pdf'),
-    'presentation-pptx':('Editable submission presentation','output/presentations/RENALIS_Project_Presentation_v05_Release_Final.pptx','PPTX','application/vnd.openxmlformats-officedocument.presentationml.presentation'),
+    'architecture-pdf':('Architecture with adaptive evidence planning','output/pdf/RENALIS_Architecture_v06.pdf','PDF','application/pdf'),
+    'architecture-pptx':('Editable submission architecture','output/presentations/RENALIS_Architecture_v06_Professional_Final.pptx','PPTX','application/vnd.openxmlformats-officedocument.presentationml.presentation'),
+    'presentation-pdf':('Submission presentation and actual outcomes','output/pdf/RENALIS_Project_Presentation_v06.pdf','PDF','application/pdf'),
+    'presentation-pptx':('Editable submission presentation','output/presentations/RENALIS_Project_Presentation_v06_Design_Final.pptx','PPTX','application/vnd.openxmlformats-officedocument.presentationml.presentation'),
     'implementation-decisions':('Implementation decisions and reasons','docs/implementation-decisions-v04.md','Markdown','text/markdown'),
     'submission-checklist':('Submission and release checklist','docs/submission-checklist.md','Markdown','text/markdown'),
     'master-report':('Research, decisions and master plan','output/pdf/RENALIS_Research_Strategy_and_Master_Plan.pdf','PDF','application/pdf'),

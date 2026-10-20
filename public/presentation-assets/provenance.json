@@ -1,0 +1,19 @@
+{
+  "cover": {
+    "file": "renal-twin-cover.png",
+    "kind": "Conceptual generated illustration, not a real clinical device",
+    "tool": "Built-in image_gen tool",
+    "prompt": "Use case: stylized-concept. Asset type: cover illustration for RENALIS, a professional dialysis research digital twin presentation. Create a premium editorial 3D scientific still life, widescreen 16:9. Deep midnight navy background #071321, a sophisticated luminous translucent glass dialysis filter cartridge and two connected fluid reservoirs suspended on the RIGHT HALF, with thin clear tubing, jade fluid, restrained cyan edge light, a few precise warm coral accent lights. An abstract mirrored glass chamber suggests a model twin beside the physical chamber. Minimal museum-grade product rendering, calm and precise, cinematic soft lighting, beautifully composed, subtle fine grain. LEFT HALF must be almost entirely clean dark negative space for editable title text that will be added later. No text, no letters, no logos, no charts, no UI, no people, no anatomy, no busy floating elements. Conceptual illustration, not a real device product photograph. Very high visual quality, tasteful medical technology brand design."
+  },
+  "icons": {
+    "source": "Existing lucide-react package",
+    "license": "ISC",
+    "upstream": "https://lucide.dev/license",
+    "method": "Official library SVGs rasterized to PNG without changing their paths"
+  },
+  "screenshots": {
+    "source": "RENALIS actual local synthetic demonstration",
+    "capture": "video/submission_v05/capture.cjs",
+    "patient_streams": "Fictional; isolated SQLite database"
+  }
+}

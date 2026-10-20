@@ -43,8 +43,14 @@ Information and decision value are separate objectives. A measurement can distin
 
 ## Architecture and project presentation
 
-- [Architecture diagram — PDF](output/pdf/RENALIS_Architecture_v05.pdf) · [editable PPTX](output/presentations/RENALIS_Architecture_v05_Release_Final.pptx)
-- [Project details and outcomes — PDF](output/pdf/RENALIS_Project_Presentation_v05.pdf) · [editable PPTX](output/presentations/RENALIS_Project_Presentation_v05_Release_Final.pptx)
+The current materials use six architecture views and a 20-slide presentation. Labels, diagrams and charts remain editable in PowerPoint.
+
+- [Architecture diagram — PDF](output/pdf/RENALIS_Architecture_v06.pdf) · [editable PPTX](output/presentations/RENALIS_Architecture_v06_Professional_Final.pptx)
+- [Project details and outcomes — PDF](output/pdf/RENALIS_Project_Presentation_v06.pdf) · [editable PPTX](output/presentations/RENALIS_Project_Presentation_v06_Design_Final.pptx)
+[![System containers preview](public/presentation-assets/architecture-overview.png)](output/pdf/RENALIS_Architecture_v06.pdf)
+
+[![Presentation cover preview](public/presentation-assets/presentation-cover.png)](output/pdf/RENALIS_Project_Presentation_v06.pdf)
+
 - [Detailed research dossier](output/pdf/RENALIS_Research_Strategy_and_Master_Plan.pdf) · [implementation decisions](docs/implementation-decisions-v04.md)
 
 ```mermaid
@@ -134,8 +140,8 @@ Clinical collaborators, approvals, paired physiological calibration, an expert t
 | AI/ML model/framework details | Included: [model/framework details](#technical-stack-and-aiml-details) and [model card](docs/model-card.md) |
 | 15–20 minute unlisted YouTube demo | Verified: [Unlisted 20:00 demo](https://www.youtube.com/watch?v=ZcWNYMtM1tI) |
 | Open-source license | Included: [MIT](LICENSE) and [third-party notices](THIRD_PARTY_NOTICES.md) |
-| Architecture diagram PDF/PPT | Included: [PDF](output/pdf/RENALIS_Architecture_v05.pdf) and [editable PPTX](output/presentations/RENALIS_Architecture_v05_Release_Final.pptx) |
-| Presentation PDF/PPT with details/outcomes | Included: [PDF](output/pdf/RENALIS_Project_Presentation_v05.pdf) and [editable PPTX](output/presentations/RENALIS_Project_Presentation_v05_Release_Final.pptx) |
+| Architecture diagram PDF/PPT | Included: [PDF](output/pdf/RENALIS_Architecture_v06.pdf) and [editable PPTX](output/presentations/RENALIS_Architecture_v06_Professional_Final.pptx) |
+| Presentation PDF/PPT with details/outcomes | Included: [PDF](output/pdf/RENALIS_Project_Presentation_v06.pdf) and [editable PPTX](output/presentations/RENALIS_Project_Presentation_v06_Design_Final.pptx) |
 | All files and links publicly accessible | Verified: public repository, anonymous linked-file downloads, and video player access; see [verification record](docs/submission-verification.json) |
 
 [Final submission steps](docs/UPLOAD_NEXT.md) · [submission checklist](docs/submission-checklist.md) · [team metadata](docs/team.json). The repository and video are published. Organizer form submission and its receipt remain the entrant's final step.

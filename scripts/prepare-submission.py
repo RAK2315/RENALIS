@@ -1,5 +1,5 @@
 """Prepare a reviewed public-source folder and ZIP; never publish automatically."""
-import hashlib,json,re,shutil,zipfile
+import hashlib,json,os,re,shutil,zipfile
 from pathlib import Path
 ROOT=Path(__file__).resolve().parents[1]
 OUT=ROOT/'artifacts/release';BUNDLE=OUT/'RENALIS-Sigmoid-GitHub'
@@ -12,9 +12,13 @@ def sha(p):return hashlib.sha256(p.read_bytes()).hexdigest()
 def build():
     OUT.mkdir(parents=True,exist_ok=True);BUNDLE.mkdir(exist_ok=True)
     selected=[ROOT/f for f in FILES]
-    for d in DIRS:selected.extend(p for p in (ROOT/d).rglob('*') if p.is_file() and keep(p.relative_to(ROOT)))
+    for d in DIRS:
+        for current,dirs,names in os.walk(ROOT/d):
+            dirs[:]=[name for name in dirs if name not in IGNORE]
+            selected.extend(p for name in names if (p:=Path(current)/name).is_file() and keep(p.relative_to(ROOT)))
     selected.extend((ROOT/'output/pdf').glob('*.pdf'))
-    selected.extend(p for p in (ROOT/'output/presentations').glob('*_Final.pptx') if '_v04_' in p.name or '_Release_Final' in p.name)
+    latest={'RENALIS_Architecture_v06_Professional_Final.pptx','RENALIS_Project_Presentation_v06_Design_Final.pptx'}
+    selected.extend(p for p in (ROOT/'output/presentations').glob('*_Final.pptx') if '_v04_' in p.name or '_Release_Final' in p.name or p.name in latest)
     manifest={}
     for p in selected:
         assert p.stat().st_size<50_000_000,p
