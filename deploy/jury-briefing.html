@@ -1,0 +1,291 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<title>RENALIS — Jury Briefing</title>
+<style>
+@import url('https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;600;700&family=Fraunces:opsz,wght@9..144,400;9..144,500;9..144,600&display=swap');
+
+:root{
+  --forest:#102e25; --ink:#1c3329; --muted:#5c6b60; --line:#dde5d8;
+  --paper:#f7f8f3; --card:#ffffff; --lime:#d4edaa; --jade:#63dbc0;
+  --cyan:#65c9f1; --amber:#b4774c; --coral:#c96a4e;
+}
+*{box-sizing:border-box}
+body{margin:0;font-family:'DM Sans',Arial,sans-serif;color:var(--ink);background:#fff;font-size:12.5pt;line-height:1.6}
+h1,h2,h3{font-family:'Fraunces',Georgia,serif;font-weight:500;margin:0;color:var(--forest)}
+.page{width:210mm;min-height:297mm;padding:18mm 20mm 16mm;position:relative;page-break-after:always;background:var(--paper)}
+.page:last-child{page-break-after:auto}
+.kicker{font-size:9pt;letter-spacing:1.6px;font-weight:600;color:#54835f;text-transform:uppercase}
+.running{display:flex;justify-content:space-between;align-items:center;font-size:8.5pt;color:#8a9686;border-bottom:1px solid var(--line);padding-bottom:8px;margin-bottom:16px}
+.running b{color:var(--forest);font-weight:600;letter-spacing:.5px}
+.foot{position:absolute;bottom:10mm;left:20mm;right:20mm;display:flex;justify-content:space-between;font-size:8pt;color:#99a593;border-top:1px solid var(--line);padding-top:6px}
+p{margin:0 0 10px}
+.card{background:var(--card);border:1px solid var(--line);border-radius:10px;padding:16px 18px}
+.grid2{display:grid;grid-template-columns:1fr 1fr;gap:14px}
+.grid3{display:grid;grid-template-columns:1fr 1fr 1fr;gap:12px}
+table{width:100%;border-collapse:collapse;font-size:10pt}
+th{text-align:left;font-size:8.5pt;letter-spacing:.4px;text-transform:uppercase;color:#6d7d6a;padding:7px 10px;border-bottom:1px solid var(--line)}
+td{padding:9px 10px;border-bottom:1px solid #eef1ea;vertical-align:top}
+.stat{font-family:'Fraunces',Georgia,serif;font-size:26pt;color:var(--forest);line-height:1}
+.statlabel{font-size:8.5pt;color:var(--muted);margin-top:4px}
+.tag{display:inline-block;font-size:8pt;padding:3px 8px;border-radius:4px;background:#e8efdf;color:#4b6b3f;font-weight:600;letter-spacing:.3px}
+.tag.warn{background:#f6ece0;color:#8a5a2c}
+.tag.neg{background:#f6e3df;color:#9c4a36}
+ul{margin:8px 0 10px;padding-left:18px}
+li{margin-bottom:5px}
+.cover{background:var(--forest);color:#eaf1e1;display:flex;flex-direction:column;justify-content:space-between}
+.cover .kicker{color:#9fc08a}
+.cover h1{color:#fff;font-size:44pt;line-height:1.08;letter-spacing:-1px;margin:18px 0}
+.cover .sub{font-size:13pt;color:#c3d6b7;max-width:420px;line-height:1.6}
+.cover .meta{display:grid;grid-template-columns:1fr 1fr;gap:18px;border-top:1px solid #2b4a3b;padding-top:18px;font-size:9.5pt;color:#aec49e}
+.cover .meta b{display:block;color:#eef4e4;font-size:11pt;font-weight:600;margin-bottom:3px}
+.cover .numbers{display:grid;grid-template-columns:repeat(4,1fr);gap:20px;border-top:1px solid #2b4a3b;border-bottom:1px solid #2b4a3b;padding:26px 0;margin:30px 0}
+.cover .numbers div{display:grid;gap:6px}
+.cover .numbers strong{font-family:'Fraunces',Georgia,serif;font-size:27pt;color:#e9f3d8;font-weight:500;line-height:1}
+.cover .numbers span{font-size:9pt;color:#9fb98f;line-height:1.5}
+figure{margin:12px 0;text-align:center}
+figure img{width:100%;border-radius:8px;border:1px solid var(--line)}
+figcaption{font-size:8.5pt;color:var(--muted);margin-top:6px}
+.quote{border-left:3px solid var(--jade);padding:10px 16px;background:#eef6ee;border-radius:0 8px 8px 0;font-size:10.5pt;color:#3a5340;font-style:italic}
+.req-row td:first-child{font-weight:600;color:var(--forest);width:38%}
+.small{font-size:9pt;color:var(--muted)}
+.honest{background:#fbf3e7;border:1px solid #e7d3ab;border-radius:8px;padding:12px 16px;font-size:10pt;color:#7a5a2d}
+.honest b{color:#5c4420}
+</style>
+</head>
+<body>
+
+<!-- PAGE 1 — COVER -->
+<section class="page cover">
+  <div>
+    <div class="kicker">Happiest Health · Digital Twin Challenge 2026 · Top 10</div>
+    <h1>RENALIS</h1>
+    <div class="sub">An evidence-aware digital twin for dialysis research. Compares competing physiological explanations for falling blood pressure, and computes which next measurement would actually help.</div>
+    <div class="numbers">
+      <div><strong>4</strong><span>Competing physiological hypotheses tracked at once, never collapsed to one</span></div>
+      <div><strong>6</strong><span>Linked evidence-journey stages, from history to validated claim</span></div>
+      <div><strong>61,947</strong><span>Held-out real-data test windows in the honest observed-data benchmark</span></div>
+      <div><strong>192</strong><span>Frozen independent cases stress-testing the measurement planner</span></div>
+    </div>
+  </div>
+  <div class="meta">
+    <div><b>Team Sigmoid</b>Rehaan — solo entrant</div>
+    <div><b>College / Incubator</b>JSS University, Noida</div>
+    <div><b>Project title</b>RENALIS — Evidence-aware Dialysis Digital Twin</div>
+    <div><b>Status</b>Working research prototype · software release 0.4</div>
+    <div><b>Repository</b>github.com/RAK2315/RENALIS</div>
+    <div><b>Prepared</b>November 2026, for the Phase 2 virtual jury round</div>
+  </div>
+</section>
+
+<!-- PAGE 2 — THE BRIEF -->
+<section class="page">
+  <div class="running"><b>RENALIS</b><span>01 · The brief we were given</span></div>
+  <div class="kicker">Problem statement & mandatory requirements</div>
+  <h2 style="font-size:25pt;margin:12px 0 16px">We didn't choose the problem. We chose how to answer it.</h2>
+  <p>The Happiest Health Digital Twin Challenge asked teams to build a proof-of-concept digital twin that predicts <b>one specific, localized adverse health outcome</b> for <b>one chronic condition</b>, by fusing two data streams, and to present it through a doctor-facing interface:</p>
+  <div class="quote">"A Digital Twin... is a dynamic, virtual replica of a patient, constantly updated with real-time data from wearables, paired with Electronic Health Records (EHR)... By simulating a patient's unique physiology, it can predict adverse health events before they happen."</div>
+  <p class="small" style="margin-top:6px">— From the official challenge brief</p>
+
+  <table style="margin-top:14px">
+    <thead><tr><th>Required by the brief</th><th>What RENALIS delivers</th></tr></thead>
+    <tbody>
+      <tr class="req-row"><td>One chronic/lifestyle condition, one localized adverse outcome</td><td>Chronic kidney disease on maintenance hemodialysis → intradialytic hypotension (systolic BP ≤90 mmHg within 30 minutes). Not one of the brief's three example conditions (diabetes, hypertension, cardiovascular risk) — a deliberately chosen fourth, equally prevalent one.</td></tr>
+      <tr class="req-row"><td>Static/historical EHR stream</td><td>A learned per-patient fluid-refill prior fitted from six preceding synthetic dialysis sessions, shrunk toward a population reference.</td></tr>
+      <tr class="req-row"><td>Dynamic/real-time device stream</td><td>Per-minute synthetic BP-cuff readings + live ultrafiltration (fluid-removal) machine settings, replayed minute by minute.</td></tr>
+      <tr class="req-row"><td>A working algorithmic model that predicts the event</td><td>A 192-particle Bayesian fluid-compartment filter, plus a second four-hypothesis "Mechanism lab" that also decides what to measure next.</td></tr>
+      <tr class="req-row"><td>A conceptual doctor-facing UI dashboard</td><td>A full browser research workspace — not a mockup — with six linked stages: Learn, Understand, Compare, Ask, Review, Verify.</td></tr>
+      <tr class="req-row"><td>Synthetic / open-source data only (DPDP / HIPAA sandbox)</td><td>Four fictional, seeded synthetic patients for the live demo; the public HEMOBP dataset (CC BY 4.0) for a separate, honestly-reported retrospective benchmark.</td></tr>
+      <tr class="req-row"><td>GitHub repo, license, video, architecture + presentation PDF/PPT</td><td>All published: public MIT-licensed repo, 20-minute unlisted demo, architecture &amp; presentation decks in PDF and editable PPTX.</td></tr>
+    </tbody>
+  </table>
+</section>
+
+<!-- PAGE 3 — THE IDEA -->
+<section class="page">
+  <div class="running"><b>RENALIS</b><span>02 · The idea</span></div>
+  <div class="kicker">One sentence</div>
+  <h2 style="font-size:27pt;margin:12px 0 18px">Don't predict one future. Keep the disagreement — and ask what would resolve it.</h2>
+  <p style="font-size:12pt;line-height:1.75">During dialysis, a patient's blood pressure can fall for several different physiological reasons: the body can't pull fluid back into circulation fast enough, the blood vessels stop compensating, or the heart's output drops. A single BP trace is often compatible with more than one of these. Most prediction systems quietly pick one story and move on. <b>RENALIS refuses to.</b></p>
+  <p>Instead, it keeps four competing explanations alive simultaneously — each represented as a cloud of weighted particles — and treats the real question as a second-order one: <i>given what we know right now, which additional, feasible measurement would most help tell these explanations apart?</i> That's the actual research contribution: adaptive, sequential measurement selection driven by expected information gain, computed separately from whether that measurement would even change what a clinician would do (decision value).</p>
+
+  <div class="grid2" style="margin-top:16px">
+    <div class="card">
+      <div class="kicker">The twin</div>
+      <h3 style="font-size:13pt;margin:8px 0">Patient twin</h3>
+      <p class="small">192-particle Bayesian fluid-compartment filter. Fuses the learned historical prior with available BP and machine readings to estimate current plasma/tissue volume and forecast a localized BP outcome.</p>
+    </div>
+    <div class="card">
+      <div class="kicker">The reasoning</div>
+      <h3 style="font-size:13pt;margin:8px 0">Mechanism lab</h3>
+      <p class="small">Four physiological hypothesis families × 48 particles each. Scores every feasible next measurement (repeat BP, relative blood volume, cardiac output) by how much it would narrow the disagreement — and separately, by how much it would change the decision.</p>
+    </div>
+  </div>
+
+  <div class="card" style="margin-top:14px;background:#eef3e6">
+    <div class="kicker">Worked example, from the actual app</div>
+    <p style="margin-top:8px">Patient Meera (RNL-014), minute 90. After a cardiac-output reading of <b>3.74 L/min</b>, support splits almost evenly — 51.7% cardiac, 46.2% volume/refill. The planner picks <b>relative blood volume</b> as the next measurement, because the two surviving hypotheses predict different results for it (medians 83.9% vs 87.8% of starting volume). The acquired reading, <b>85.0%</b>, shifts support to 66.9% volume/refill vs 31.8% cardiac — informative, but still not fully resolved. The system says so, instead of forcing an answer.</p>
+  </div>
+</section>
+
+<!-- PAGE 4 — ARCHITECTURE -->
+<section class="page">
+  <div class="running"><b>RENALIS</b><span>03 · What we built</span></div>
+  <div class="kicker">Architecture</div>
+  <h2 style="font-size:23pt;margin:12px 0 16px">A real React + FastAPI application, not a notebook.</h2>
+  <figure>
+    <img src="../public/readme/architecture.webp" alt="RENALIS architecture: React workspace, FastAPI service, SQLite evidence store">
+    <figcaption>Local system containers, service responsibilities, and evidence storage (see the full architecture deck for all six views).</figcaption>
+  </figure>
+  <div class="grid3" style="margin-top:12px">
+    <div class="card">
+      <div class="kicker">Interface</div>
+      <p class="small" style="margin-top:6px">React, TypeScript, Vite, Recharts. A six-stage evidence-journey workspace plus a public landing/research site.</p>
+    </div>
+    <div class="card">
+      <div class="kicker">API & inference</div>
+      <p class="small" style="margin-top:6px">FastAPI + NumPy. One Python service hosts both particle-filter engines and the adaptive-measurement scorer.</p>
+    </div>
+    <div class="card">
+      <div class="kicker">Evidence store</div>
+      <p class="small" style="margin-top:6px">SQLite. Every acquisition, failure, and correction is appended, never overwritten — an auditable research log, not a mutable form.</p>
+    </div>
+  </div>
+  <p style="margin-top:16px">A fourth, entirely separate pipeline (pandas + scikit-learn) runs the retrospective benchmark against the public HEMOBP dataset. It never feeds the live synthetic twin — keeping "does the product work" and "does history actually predict BP" as two honestly distinct questions.</p>
+</section>
+
+<!-- PAGE 5 — FEATURES -->
+<section class="page">
+  <div class="running"><b>RENALIS</b><span>04 · Features</span></div>
+  <div class="kicker">The evidence journey</div>
+  <h2 style="font-size:23pt;margin:12px 0 16px">Six connected stages, one patient, one evidence cutoff.</h2>
+  <table>
+    <thead><tr><th>Stage</th><th>What a researcher can do</th></tr></thead>
+    <tbody>
+      <tr><td><b>01 Learn</b></td><td>Inspect the fitted refill prior, its source sessions and lineage digest.</td></tr>
+      <tr><td><b>02 Understand</b></td><td>Click through estimated fluid compartments, machine settings, and the authored physiology graph.</td></tr>
+      <tr><td><b>03 Compare</b></td><td>See all four hypothesis families, their fit error, and modeled response, side by side.</td></tr>
+      <tr><td><b>04 Ask</b></td><td>Preview possible measurement results before acquiring anything; acquire the planner's recommended next reading.</td></tr>
+      <tr><td><b>05 Review</b></td><td>See every acquisition, including failures and artifacts; append corrections with a reason, never silently overwrite.</td></tr>
+      <tr><td><b>06 Verify</b></td><td>Read the retrospective and independent-policy results in place, including the negative one.</td></tr>
+    </tbody>
+  </table>
+  <div class="grid2" style="margin-top:16px">
+    <div class="card">
+      <div class="kicker">Safety-first design</div>
+      <ul class="small">
+        <li>Withholds forecasts when BP is already critically low, evidence is stale, or the model is contradicted.</li>
+        <li>Separates information gain (bits) from decision value (research-loss units) — a measurement can be informative without changing what you'd do.</li>
+        <li>Never uses the words "diagnosis" or "treatment recommendation."</li>
+      </ul>
+    </div>
+    <div class="card">
+      <div class="kicker">Also included</div>
+      <ul class="small">
+        <li>Action-loss scenario comparison (hypothetical removal-rate profiles).</li>
+        <li>Longitudinal multi-session transport with mass-balance checks.</li>
+        <li>Fictional FHIR R4 export (Patient/Device/Observation) as an interoperability example.</li>
+      </ul>
+    </div>
+  </div>
+</section>
+
+<!-- PAGE 6 — STACK -->
+<section class="page">
+  <div class="running"><b>RENALIS</b><span>05 · Technical stack & AI/ML</span></div>
+  <div class="kicker">Implementation</div>
+  <h2 style="font-size:23pt;margin:12px 0 16px">What's actually running under the hood.</h2>
+  <table>
+    <thead><tr><th>Layer</th><th>Implementation</th></tr></thead>
+    <tbody>
+      <tr><td>Interface</td><td>React, TypeScript, Vite, Recharts, Lucide</td></tr>
+      <tr><td>API & inference</td><td>FastAPI, Python, NumPy</td></tr>
+      <tr><td>Persistence</td><td>SQLite — acquisitions, measurements, corrections, saved revisions</td></tr>
+      <tr><td>Retrospective evaluation</td><td>pandas, scikit-learn, patient-separated fit/calibration/test splits</td></tr>
+      <tr><td>Reproducibility</td><td>Pinned Python deps, npm lockfile, 50 backend unit tests, GitHub Actions CI</td></tr>
+    </tbody>
+  </table>
+  <h3 style="font-size:13pt;margin:18px 0 8px">The model, precisely</h3>
+  <p>A likelihood-based history learner feeds a particle state estimator (patient twin) and a second, four-family compatibility estimator (mechanism lab) with Gaussian observation likelihoods. Numerical Gauss-Hermite quadrature integrates over possible noisy measurement outcomes before any result exists — the planner never sees the synthetic device's hidden value while deciding what to recommend.</p>
+  <p>The adaptive selector ranks <b>pair-conditional expected entropy reduction</b> when two families retain at least 10% support, otherwise whole-bank information. Equipment availability, acquisition timing, failure probability, and already-released evidence all constrain which measurements are even candidates.</p>
+</section>
+
+<!-- PAGE 7 — VALIDATION -->
+<section class="page">
+  <div class="running"><b>RENALIS</b><span>06 · How we validated it</span></div>
+  <div class="kicker">Three separate evidence lanes — never pooled</div>
+  <h2 style="font-size:22pt;margin:12px 0 16px">Each experiment answers a different question.</h2>
+  <div class="card" style="margin-bottom:10px">
+    <span class="tag">A · Synthetic twin</span>
+    <p style="margin-top:8px"><b>Does the pipeline behave coherently?</b> Four fictional patients exercise time-availability guards, personalization, fluid accounting, and forecast safeguards. The generator and estimator share structure, so this is functional verification, not an accuracy claim.</p>
+  </div>
+  <div class="card" style="margin-bottom:10px">
+    <span class="tag">B · Observed HEMOBP data</span>
+    <p style="margin-top:8px"><b>Does patient history actually help predict a later real BP reading?</b> 61,947 held-out test windows, 176 patients, zero patient overlap with training.</p>
+    <div class="grid3" style="margin-top:10px">
+      <div><div class="stat" style="font-size:18pt">12.19</div><div class="statlabel">Last-BP-only MAE, mmHg</div></div>
+      <div><div class="stat" style="font-size:18pt">11.33</div><div class="statlabel">+ Demographics, mmHg</div></div>
+      <div><div class="stat" style="font-size:18pt">11.16</div><div class="statlabel">+ Preceding history, mmHg</div></div>
+    </div>
+    <p class="small" style="margin-top:8px">History's own contribution: −0.17 mmHg MAE (cluster interval [−0.23, −0.11]) — real but small. Event sensitivity 61.3%, PPV 13.5%.</p>
+  </div>
+  <div class="card">
+    <span class="tag neg">C · Independent policy challenge</span>
+    <p style="margin-top:8px"><b>Does choosing a measurement actually improve the decision?</b> 192 frozen cases, one acquisition budget per policy. Mean regret: <b>0.222</b> for a fixed cuff policy vs <b>0.241</b> for the decision-value policy — the adaptive selector does not yet beat the naive baseline here. Disclosed, not hidden.</p>
+  </div>
+</section>
+
+<!-- PAGE 8 — HONEST LIMITS -->
+<section class="page">
+  <div class="running"><b>RENALIS</b><span>07 · Results & limitations, honestly</span></div>
+  <div class="kicker">Why we're telling you what doesn't work yet</div>
+  <h2 style="font-size:22pt;margin:12px 0 16px">A hackathon prototype should say what it hasn't proven.</h2>
+  <div class="honest" style="margin-bottom:12px"><b>The retrospective predictive gain is small.</b> −0.17 mmHg is a real, measured effect — but it has not been shown to be clinically important.</div>
+  <div class="honest" style="margin-bottom:12px"><b>Event alerts carry real false-positive burden.</b> At 13.5% PPV, most flagged windows would not be real events in an operational setting.</div>
+  <div class="honest" style="margin-bottom:12px"><b>The newer adaptive selector hasn't beaten a naive policy yet.</b> The 192-case independent challenge is a disclosed negative result for the decision-value objective; the newest sequential-discrimination engine hasn't been re-run against that same challenge.</div>
+  <div class="honest" style="margin-bottom:12px"><b>The observed-data cohort has an unresolved assumption.</b> Only 2.52M of 4.37M machine-log packets could be matched to a session under an empirical 8-hour clock-alignment guess that needs independent confirmation.</div>
+  <p style="margin-top:14px">None of this is a hedge added for this document — it's drawn directly from the project's own model card and evaluation reports, which are shipped in the repository and surfaced inside the app itself. We think a jury evaluating technical maturity should see the failure modes, not just the demo.</p>
+</section>
+
+<!-- PAGE 9 — ORIGINALITY & NEXT -->
+<section class="page">
+  <div class="running"><b>RENALIS</b><span>08 · Originality & what's next</span></div>
+  <div class="kicker">What's new here</div>
+  <h2 style="font-size:22pt;margin:12px 0 16px">Not the pieces — the connection between them.</h2>
+  <p>Dialysis BP prediction, digital-twin integration, hemodynamic mechanism distinctions, and optimal-sampling frameworks already exist separately in the literature. RENALIS investigates their <i>combination</i> in one inspectable workflow: retain rival explanations → expose scenario disagreement → estimate the next useful evidence → update support → preserve an unresolved or contradicted state rather than forcing an answer. A focused review supports this as a genuine research question; it does not claim global priority.</p>
+  <h3 style="font-size:13pt;margin:18px 0 10px">Validation roadmap</h3>
+  <table>
+    <tbody>
+      <tr><td style="width:30px"><b>01</b></td><td><span class="tag">Done</span> A reproducible, inspectable prototype — guarded states, persistent evidence, regression tests, CI.</td></tr>
+      <tr><td><b>02</b></td><td><span class="tag warn">Next</span> Stronger retrospective evaluation: independent clock-alignment confirmation, canonical units, patient-separated calibration.</td></tr>
+      <tr><td><b>03</b></td><td><span class="tag warn">Needs collaborators</span> Paired physiological and human-factors evaluation with clinical partners, under approved protocols.</td></tr>
+      <tr><td><b>04</b></td><td><span class="tag neg">Not established</span> Treatment-effect and clinical-benefit claims — require a predeclared, prospective, causal study design.</td></tr>
+    </tbody>
+  </table>
+</section>
+
+<!-- PAGE 10 — TEAM & LINKS -->
+<section class="page">
+  <div class="running"><b>RENALIS</b><span>09 · Team, links & license</span></div>
+  <div class="kicker">Closing</div>
+  <h2 style="font-size:22pt;margin:12px 0 18px">Thank you — questions welcome.</h2>
+  <table style="margin-bottom:18px">
+    <tbody>
+      <tr><td style="width:150px"><b>Team</b></td><td>Sigmoid</td></tr>
+      <tr><td><b>Member</b></td><td>Rehaan — solo entrant, project design, development and submission</td></tr>
+      <tr><td><b>College / incubator</b></td><td>JSS University, Noida</td></tr>
+      <tr><td><b>GitHub</b></td><td>github.com/RAK2315 · github.com/RAK2315/RENALIS</td></tr>
+      <tr><td><b>Demo video</b></td><td>20-minute unlisted walkthrough (linked from the repository README)</td></tr>
+      <tr><td><b>License</b></td><td>MIT (project code) · HEMOBP dataset retains CC BY 4.0 attribution</td></tr>
+    </tbody>
+  </table>
+  <div class="card">
+    <div class="kicker">What to remember about RENALIS</div>
+    <p style="margin-top:8px">It is not trying to be the best BP predictor. It is trying to show that <b>disagreement between explanations is information</b> — and that a research tool should be able to say "I don't know yet, but here's what would help me find out," instead of always producing a confident number.</p>
+  </div>
+  <p class="small" style="margin-top:20px">All patients, sessions and device readings shown in this document and in the live application are synthetic and fictional, per the challenge's sandbox rules. Clinical deployment, treatment control and prospective patient benefit have not been established.</p>
+</section>
+
+</body>
+</html>
