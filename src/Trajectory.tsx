@@ -32,14 +32,14 @@ export default function Trajectory({ twin, scenario, outcome }: { twin: Twin; sc
         <CartesianGrid vertical={false} stroke="#e5eae6" />
         <XAxis dataKey="minute" type="number" domain={[Math.max(0, twin.cutoff - 40), twin.cutoff + twin.horizon]} ticks={[Math.max(0, twin.cutoff - 30), twin.cutoff, twin.cutoff + Math.floor(twin.horizon / 2), twin.cutoff + twin.horizon]} tickFormatter={v => v === twin.cutoff ? 'Now' : v < twin.cutoff ? `${v - twin.cutoff}m` : `+${v - twin.cutoff}m`} axisLine={false} tickLine={false} tick={{ fontSize: 12, fill: '#75847b' }} />
         <YAxis domain={bounds} tickCount={5} axisLine={false} tickLine={false} tick={{ fontSize: 12, fill: '#75847b' }} />
-        <Tooltip labelFormatter={v => `Session minute ${v}`} formatter={(value, name) => Array.isArray(value) ? [`${Number(value[0]).toFixed(0)}–${Number(value[1]).toFixed(0)} mmHg`, 'Particle range'] : [`${Number(value).toFixed(1)} mmHg`, name]} contentStyle={{ border: '1px solid #dde5df', borderRadius: 12, fontSize: 12 }} />
+        <Tooltip labelFormatter={v => `Session minute ${v}`} formatter={(value, name) => Array.isArray(value) ? [`${Number(value[0]).toFixed(0)}–${Number(value[1]).toFixed(0)} mmHg`, 'Likely range'] : [`${Number(value).toFixed(1)} mmHg`, name]} contentStyle={{ border: '1px solid #dde5df', borderRadius: 12, fontSize: 12 }} />
         <ReferenceLine y={90} stroke="#bd7b52" strokeDasharray="3 5" label={{ value: '90', position: 'insideBottomRight', fill: '#aa6e48', fontSize: 12 }} />
         <ReferenceLine x={twin.cutoff} stroke="#b9c8bd" strokeDasharray="3 4" />
-        <Area type="monotone" dataKey="band" name="Particle range" stroke="none" fill="#d4e5d6" fillOpacity={0.5} isAnimationActive={false} connectNulls />
-        <Line type="monotone" dataKey="observed" name="Observed synthetic BP" stroke="#617468" strokeWidth={2.3} dot={{ r: 2.5, fill: '#617468', strokeWidth: 0 }} connectNulls isAnimationActive={false} />
-        <Line type="monotone" dataKey="current" name="Current profile" stroke="#bd7b52" strokeWidth={2.5} dot={false} strokeDasharray="6 5" isAnimationActive={false} connectNulls />
-        <Line type="monotone" dataKey="alternative" name="Alternative profile" stroke="#2a7658" strokeWidth={2.8} dot={false} isAnimationActive={false} connectNulls />
-        {outcome && <Line type="monotone" dataKey="revealed" name="Revealed outcome" stroke="#7766a0" strokeWidth={2} dot={{ r: 3 }} isAnimationActive={false} connectNulls />}
+        <Area type="monotone" dataKey="band" name="Likely range" stroke="none" fill="#d4e5d6" fillOpacity={0.5} isAnimationActive={false} connectNulls />
+        <Line type="monotone" dataKey="observed" name="Measured BP" stroke="#617468" strokeWidth={2.3} dot={{ r: 2.5, fill: '#617468', strokeWidth: 0 }} connectNulls isAnimationActive={false} />
+        <Line type="monotone" dataKey="current" name="Forecast (current setting)" stroke="#bd7b52" strokeWidth={2.5} dot={false} strokeDasharray="6 5" isAnimationActive={false} connectNulls />
+        <Line type="monotone" dataKey="alternative" name="Forecast (“what if” setting)" stroke="#2a7658" strokeWidth={2.8} dot={false} isAnimationActive={false} connectNulls />
+        {outcome && <Line type="monotone" dataKey="revealed" name="What really happened" stroke="#7766a0" strokeWidth={2} dot={{ r: 3 }} isAnimationActive={false} connectNulls />}
       </ComposedChart>
     </ResponsiveContainer>
   </div>;

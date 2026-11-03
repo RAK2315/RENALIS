@@ -21,3 +21,38 @@
 .research-block>div:last-child>.source-count,.research-section-label,.research-scope-grid span,.source-meta,.source-library dt,.research-table-wrap th,.research-stat-row span,.project-resources>a>div>span,.hero-disclosure,.scope-strip span,.workflow-steps article>span,.landing-final-note{color:#60774f}.site .research-callout p{color:#5c724a}
 
 .current-release{margin:28px 0 42px;padding:28px;background:#edf3e6;border:1px solid #d1dfc1;border-radius:12px}.current-release>h3{font:30px Georgia,serif;margin:16px 0}.current-release-metrics{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:18px;padding:22px 0}.current-release-metrics>div{display:grid;gap:10px}.current-release-metrics span{font-size:13px;min-height:32px;color:#6b805e}.current-release-metrics strong{font:32px Georgia,serif;color:#345a38}.current-release-metrics small{font-size:13px;color:#75876b}.current-release-caution{border:1px solid #d9bfa0;border-radius:7px;padding:14px 16px;background:#f5f0e2}.current-release h4{font:23px Georgia,serif;margin:28px 0 14px}.current-release-links{display:flex;gap:18px;flex-wrap:wrap;margin-top:22px;font-size:13px}.current-release-links a{color:#416c41;text-underline-offset:4px}.current-release-error{padding:15px;border:1px solid #d9bfa0;border-radius:7px}@media(max-width:700px){.current-release{padding:20px}.current-release-metrics{grid-template-columns:repeat(2,minmax(0,1fr))}}
+
+/* Plain-English glossary on the landing page */
+.glossary-section{display:grid;grid-template-columns:minmax(0,.8fr) minmax(0,1.6fr);gap:70px;padding-top:95px;padding-bottom:95px;border-top:1px solid #dce3d5}
+.glossary-section h2{margin-top:22px}
+.glossary-section>div>p{margin-top:20px;font-size:16px;line-height:1.8;color:#63755c;max-width:34ch}
+.glossary{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:30px 44px;margin:0}
+.glossary div{padding-top:16px;border-top:1px solid #dce3d5}
+.glossary dt{font-size:18px;font-weight:600;color:#1f3a2c;margin-bottom:8px}
+.glossary dd{margin:0;font-size:15px;line-height:1.75;color:#63755c}
+@media(max-width:900px){.glossary-section{grid-template-columns:1fr;gap:36px;padding-top:70px;padding-bottom:70px}}
+@media(max-width:680px){.glossary{grid-template-columns:1fr;gap:22px}}
+
+/* Guided tour: plain-language "what it means / try this" blocks */
+.guided-tour{max-height:min(500px,74vh)}
+.tour-body p{font-size:15px}
+.tour-meaning,.tour-observe{margin-top:12px;padding:12px 14px;border-radius:10px;border:0}
+.tour-meaning{background:#eef3e6}
+.tour-observe{background:#f3efe2}
+.tour-meaning>span,.tour-observe>span{display:block;font-size:13px;font-weight:600;letter-spacing:0;color:#4f7444}
+.tour-observe>span{color:#8a6a2e}
+.tour-meaning p,.tour-observe p{margin-top:4px;color:#35502a;font-size:15px;line-height:1.65}
+.tour-focus{scroll-margin-top:24px}
+
+/* Guided tour: header row carries the buttons; wide screens get a short bottom strip */
+.guided-tour .tour-heading{flex-wrap:wrap}
+.guided-tour .tour-heading .tour-actions{border:0;margin:0;padding:0;gap:8px;flex-wrap:nowrap}
+.guided-tour .tour-heading .tour-actions>.text-button{margin-right:4px}
+.guided-tour.strip{transform:none;bottom:16px;max-height:none;padding:14px 20px 18px}
+.guided-tour.strip .tour-body{display:grid;grid-template-columns:1.05fr 1fr 1fr;gap:14px;align-items:stretch;margin-top:12px}
+.guided-tour.strip .tour-meaning,.guided-tour.strip .tour-observe{margin-top:0}
+.guided-tour.strip .tour-body h2{font-size:21px;margin-bottom:6px}
+.guided-tour.strip .tour-body p{font-size:14.5px;line-height:1.6}
+@media(max-width:1020px){.guided-tour.strip .tour-body{grid-template-columns:1fr 1fr}.guided-tour.strip .tour-intro{grid-column:1/-1}}
+@media(max-width:850px){.guided-tour .tour-heading .tour-actions{order:3;width:100%;margin-top:10px}.guided-tour .tour-heading .tour-actions>.text-button{min-width:0;margin:0 auto 0 0}.guided-tour .tour-heading .tour-actions>.icon-button{position:absolute;top:12px;right:12px}}
+@media(max-width:850px){.guided-tour{max-height:52vh}}
