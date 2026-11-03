@@ -4,9 +4,11 @@
 
 RENALIS compares competing physiological explanations, identifies the next useful measurement, and shows how an acquired result changes the model's reasoning.
 
-[![Verify RENALIS](https://github.com/RAK2315/RENALIS/actions/workflows/verify.yml/badge.svg)](https://github.com/RAK2315/RENALIS/actions/workflows/verify.yml) [![License: MIT](https://img.shields.io/badge/License-MIT-63dbc0.svg)](LICENSE) [![Demo: 20 minutes](https://img.shields.io/badge/Demo-20%20minutes-65c9f1.svg)](https://www.youtube.com/watch?v=ZcWNYMtM1tI)
+[![Verify RENALIS](https://github.com/RAK2315/RENALIS/actions/workflows/verify.yml/badge.svg)](https://github.com/RAK2315/RENALIS/actions/workflows/verify.yml) [![License: MIT](https://img.shields.io/badge/License-MIT-63dbc0.svg)](LICENSE) [![Demo: 20 minutes](https://img.shields.io/badge/Demo-20%20minutes-65c9f1.svg)](https://www.youtube.com/watch?v=ZcWNYMtM1tI) [![Live demo](https://img.shields.io/badge/Live-renalis--one.vercel.app-d4edaa.svg)](https://renalis-one.vercel.app)
 
-[Watch the demo](https://www.youtube.com/watch?v=ZcWNYMtM1tI) · [Quick start](#quick-start) · [Architecture](#architecture-and-project-presentation) · [Results](#evaluated-outcomes-and-limits) · [Submission checklist](#organizer-submission-checklist)
+[Open the live app](https://renalis-one.vercel.app) · [Watch the demo](https://www.youtube.com/watch?v=ZcWNYMtM1tI) · [Quick start](#quick-start) · [Architecture](#architecture-and-project-presentation) · [Results](#evaluated-outcomes-and-limits) · [Submission checklist](#organizer-submission-checklist)
+
+The live app's backend runs on a free Hugging Face Space, which can take ~30-60 seconds to wake up if it has been idle — reload if the first request times out.
 
 [![RENALIS project presentation cover](public/readme/renalis-cover.webp)](https://www.youtube.com/watch?v=ZcWNYMtM1tI)
 
