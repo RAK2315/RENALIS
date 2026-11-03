@@ -1,4 +1,4 @@
-import { useEffect, useState } from 'react';
+import { useEffect, useRef, useState } from 'react';
 import { ArrowLeft, ArrowRight, Check, Compass, X } from 'lucide-react';
 import type { WorkspacePage } from './Experience';
 
@@ -10,9 +10,48 @@ export const tourSteps:[WorkspacePage,string,string,string,string][]=[
   ['investigation','Keep the evidence with the comparison.','Failures and artifacts remain visible. Corrections append a reason and preserve earlier evidence and saved reports.','Inspect observation time versus release time, save a review and export the investigation. Navigation alone does not modify evidence.','#journey-audit'],
   ['investigation','Finish with the evidence.','Audited observed data and the independent 192-case policy holdout answer different questions. The negative policy result remains visible.','Read the clock-alignment assumption, event PPV, uncertainty intervals and confident-wrong cases before making a claim.','#journey-verify'],
 ];
+
 export default function GuidedTour({step,onStep,onClose,onShow}:{step:number;onStep:(step:number)=>void;onClose:()=>void;onShow:()=>void}){
   const [,title,description,observe,selector]=tourSteps[step];
   const [targetReady,setTargetReady]=useState(false);
-  useEffect(()=>{setTargetReady(false);const highlight=()=>{const target=document.querySelector(selector);if(!target)return false;target.classList.add('tour-focus');setTargetReady(true);return true;};const observer=new MutationObserver(()=>{if(highlight())observer.disconnect();});if(!highlight())observer.observe(document.querySelector('.main-content')??document.body,{childList:true,subtree:true});return()=>{observer.disconnect();document.querySelectorAll('.tour-focus').forEach(el=>el.classList.remove('tour-focus'));};},[step,selector]);
-  return <section className="guided-tour" aria-label="Guided walkthrough"><div className="tour-heading"><span><Compass size={16}/>GUIDED WALKTHROUGH</span><button className="icon-button" onClick={onClose} aria-label="Close walkthrough"><X size={16}/></button></div><div className="tour-progress" aria-label={`Step ${step+1} of ${tourSteps.length}`}>{tourSteps.map((s,i)=><button key={s[1]} className={i===step?'current':i<step?'done':''} aria-label={`Walkthrough step ${i+1}: ${s[1]}`} aria-current={i===step?'step':undefined} onClick={()=>onStep(i)}/>)}</div><div className="tour-body"><div><span className="eyebrow">STEP {step+1} / {tourSteps.length}</span><h2>{title}</h2><p>{description}</p></div><div className="tour-observe"><span>WHAT TO OBSERVE</span><p>{observe}</p></div></div><div className="tour-actions"><button className="text-button" disabled={step===0} onClick={()=>onStep(step-1)}><ArrowLeft size={14}/>Previous</button><button className="button light" disabled={!targetReady} onClick={onShow}>{targetReady?'Show this area':'Loading area…'}</button><button className="button primary" onClick={()=>step===tourSteps.length-1?onClose():onStep(step+1)}>{step===tourSteps.length-1?<><Check size={14}/>Finish walkthrough</>:<>Next step<ArrowRight size={14}/></>}</button></div></section>;
+  const autoShown=useRef(-1);
+
+  useEffect(()=>{
+    setTargetReady(false);
+    autoShown.current=-1;
+    const highlight=()=>{
+      const target=document.querySelector(selector);
+      if(!target)return false;
+      target.classList.add('tour-focus');
+      setTargetReady(true);
+      if(autoShown.current!==step){
+        autoShown.current=step;
+        target.scrollIntoView({behavior:window.matchMedia('(prefers-reduced-motion: reduce)').matches?'instant':'smooth',block:'center'});
+      }
+      return true;
+    };
+    const observer=new MutationObserver(()=>{if(highlight())observer.disconnect();});
+    if(!highlight())observer.observe(document.querySelector('.main-content')??document.body,{childList:true,subtree:true});
+    return()=>{observer.disconnect();document.querySelectorAll('.tour-focus').forEach(el=>el.classList.remove('tour-focus'));};
+  },[step,selector]);
+
+  return <section className="guided-tour" aria-label="Guided walkthrough" role="dialog" aria-live="polite">
+    <div className="tour-heading">
+      <span><Compass size={16}/>GUIDED WALKTHROUGH · {step+1} / {tourSteps.length}</span>
+      <button className="icon-button" onClick={onClose} aria-label="Close walkthrough"><X size={16}/></button>
+    </div>
+    <div className="tour-progress" aria-label={`Step ${step+1} of ${tourSteps.length}`}>
+      {tourSteps.map((s,i)=><button key={s[1]} className={i===step?'current':i<step?'done':''} aria-label={`Walkthrough step ${i+1}: ${s[1]}`} aria-current={i===step?'step':undefined} onClick={()=>onStep(i)}/>)}
+    </div>
+    <div className="tour-body">
+      <h2>{title}</h2>
+      <p>{description}</p>
+      <div className="tour-observe"><span>WHAT TO OBSERVE</span><p>{observe}</p></div>
+    </div>
+    <div className="tour-actions">
+      <button className="text-button" disabled={step===0} onClick={()=>onStep(step-1)}><ArrowLeft size={14}/>Previous</button>
+      <button className="button light" disabled={!targetReady} onClick={onShow}>{targetReady?'Show this area':'Loading area…'}</button>
+      <button className="button primary" onClick={()=>step===tourSteps.length-1?onClose():onStep(step+1)}>{step===tourSteps.length-1?<><Check size={14}/>Finish walkthrough</>:<>Next step<ArrowRight size={14}/></>}</button>
+    </div>
+  </section>;
 }

@@ -20,3 +20,5 @@ artifacts/release/
 tmp/
 .chart-data-*/
 .codex-finalizer/
+artifacts/launch45/
+archive/

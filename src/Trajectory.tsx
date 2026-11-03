@@ -30,10 +30,10 @@ export default function Trajectory({ twin, scenario, outcome }: { twin: Twin; sc
     <ResponsiveContainer width="100%" height="100%">
       <ComposedChart data={data} margin={{ top: 15, right: 14, left: -15, bottom: 14 }}>
         <CartesianGrid vertical={false} stroke="#e5eae6" />
-        <XAxis dataKey="minute" type="number" domain={[Math.max(0, twin.cutoff - 40), twin.cutoff + twin.horizon]} ticks={[Math.max(0, twin.cutoff - 30), twin.cutoff, twin.cutoff + Math.floor(twin.horizon / 2), twin.cutoff + twin.horizon]} tickFormatter={v => v === twin.cutoff ? 'Now' : v < twin.cutoff ? `${v - twin.cutoff}m` : `+${v - twin.cutoff}m`} axisLine={false} tickLine={false} tick={{ fontSize: 11, fill: '#75847b' }} />
-        <YAxis domain={bounds} tickCount={5} axisLine={false} tickLine={false} tick={{ fontSize: 11, fill: '#75847b' }} />
+        <XAxis dataKey="minute" type="number" domain={[Math.max(0, twin.cutoff - 40), twin.cutoff + twin.horizon]} ticks={[Math.max(0, twin.cutoff - 30), twin.cutoff, twin.cutoff + Math.floor(twin.horizon / 2), twin.cutoff + twin.horizon]} tickFormatter={v => v === twin.cutoff ? 'Now' : v < twin.cutoff ? `${v - twin.cutoff}m` : `+${v - twin.cutoff}m`} axisLine={false} tickLine={false} tick={{ fontSize: 12, fill: '#75847b' }} />
+        <YAxis domain={bounds} tickCount={5} axisLine={false} tickLine={false} tick={{ fontSize: 12, fill: '#75847b' }} />
         <Tooltip labelFormatter={v => `Session minute ${v}`} formatter={(value, name) => Array.isArray(value) ? [`${Number(value[0]).toFixed(0)}–${Number(value[1]).toFixed(0)} mmHg`, 'Particle range'] : [`${Number(value).toFixed(1)} mmHg`, name]} contentStyle={{ border: '1px solid #dde5df', borderRadius: 12, fontSize: 12 }} />
-        <ReferenceLine y={90} stroke="#bd7b52" strokeDasharray="3 5" label={{ value: '90', position: 'insideBottomRight', fill: '#aa6e48', fontSize: 11 }} />
+        <ReferenceLine y={90} stroke="#bd7b52" strokeDasharray="3 5" label={{ value: '90', position: 'insideBottomRight', fill: '#aa6e48', fontSize: 12 }} />
         <ReferenceLine x={twin.cutoff} stroke="#b9c8bd" strokeDasharray="3 4" />
         <Area type="monotone" dataKey="band" name="Particle range" stroke="none" fill="#d4e5d6" fillOpacity={0.5} isAnimationActive={false} connectNulls />
         <Line type="monotone" dataKey="observed" name="Observed synthetic BP" stroke="#617468" strokeWidth={2.3} dot={{ r: 2.5, fill: '#617468', strokeWidth: 0 }} connectNulls isAnimationActive={false} />
