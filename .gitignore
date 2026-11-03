@@ -22,3 +22,5 @@ tmp/
 .codex-finalizer/
 artifacts/launch45/
 archive/
+.vercel
+.env*

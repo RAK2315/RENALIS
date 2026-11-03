@@ -16,6 +16,7 @@ ROOT="$(cd "$(dirname "${BASH_SOURCE[0]}")/.." && pwd)"
 BUILD_DIR="$(mktemp -d)"
 
 cp -r "$ROOT/backend" "$BUILD_DIR/backend"
+find "$BUILD_DIR/backend" -name "__pycache__" -type d -prune -exec rm -rf {} +
 cp "$ROOT/requirements-lock.txt" "$BUILD_DIR/requirements-lock.txt"
 cp "$ROOT/deploy/Dockerfile.hf" "$BUILD_DIR/Dockerfile"
 cp "$ROOT/deploy/README.hf.md" "$BUILD_DIR/README.md"
