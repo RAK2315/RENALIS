@@ -1,26 +1,5 @@
 {
-  "purpose": "Optimized README images. Proportions retained, no content retouching.",
-  "source_provenance": "../presentation-assets/provenance.json",
-  "images": [
-    {
-      "file": "renalis-cover.webp",
-      "source": "../presentation-assets/presentation-cover.png"
-    },
-    {
-      "file": "workspace.webp",
-      "source": "../presentation-assets/interface-workspace.png"
-    },
-    {
-      "file": "adaptive-planner.webp",
-      "source": "../presentation-assets/interface-after-co.png"
-    },
-    {
-      "file": "acquired-result.webp",
-      "source": "../presentation-assets/interface-acquire-rbv.png"
-    },
-    {
-      "file": "architecture.webp",
-      "source": "../presentation-assets/architecture-overview.png"
-    }
-  ]
+  "purpose": "README screenshots of the current interface. Made-up patients only.",
+  "generator": "Playwright at 1440x900 (2x), resized to 1600px wide webp",
+  "images": ["hero.webp", "problem.webp", "twin.webp", "learn.webp", "tanks.webp", "planner.webp", "dots.webp"]
 }

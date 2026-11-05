@@ -74,6 +74,8 @@ PROJECT_DOCUMENTS={
     'release-plan':('Release 0.4 implementation and evidence ledger','docs/release-v04.md','Markdown','text/markdown'),
     'clinical-protocol':('Proposed study with doctors','docs/clinical-study-protocol.md','Markdown','text/markdown'),
     'observed-v04':('Real-data test results','docs/observed-v04.json','JSON','application/json'),
+    'twin-real':('Twin run on real records','docs/twin-hemobp.json','JSON','application/json'),
+    'alarm-tradeoff':('False-alarm trade-off','docs/alarm-tradeoff.json','JSON','application/json'),
     'policy-v04':('Stress test results (192 cases)','docs/policy-validation-v04.json','JSON','application/json'),
     'project-guide':('RENALIS project guide','docs/project-guide.md','Markdown','text/markdown'),
     'research-review':('Evidence review and validation protocol','docs/research-review-2026-10.md','Markdown','text/markdown'),
@@ -439,7 +441,8 @@ def correct_measurement(pid:str,measurement_id:int,body:CorrectionInput):
 
 @app.get('/api/release-evaluation')
 def release_evaluation():
-    paths={'observed':'docs/observed-v04.json','policy':'docs/policy-validation-v04.json'}
+    paths={'observed':'docs/observed-v04.json','policy':'docs/policy-validation-v04.json',
+           'twin_real':'docs/twin-hemobp.json','tradeoff':'docs/alarm-tradeoff.json'}
     return {key:json.loads((ROOT/path).read_text(encoding='utf-8')) if (ROOT/path).exists() else {'status':'not_run'} for key,path in paths.items()}
 
 

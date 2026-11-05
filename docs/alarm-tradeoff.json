@@ -1,0 +1,57 @@
+{
+  "status": "evaluated",
+  "model": "Same v0.4 warning model; only the warning rule changes",
+  "test_windows": 61947,
+  "base_rate": 0.0257,
+  "base_rate_note": "Only 2.6 of every 100 moments are followed by a drop, so even a good warning is often false.",
+  "rules": [
+    {
+      "rule": "Single reading, tuned to catch 75% (calibration)",
+      "threshold": 0.06424,
+      "caught": 0.6125,
+      "right": 0.1351,
+      "false_alarms": 6255,
+      "alerts": 7232
+    },
+    {
+      "rule": "Single reading, tuned to catch 60% (calibration)",
+      "threshold": 0.10652,
+      "caught": 0.4671,
+      "right": 0.1724,
+      "false_alarms": 3577,
+      "alerts": 4322
+    },
+    {
+      "rule": "Single reading, tuned to catch 50% (calibration)",
+      "threshold": 0.14008,
+      "caught": 0.3668,
+      "right": 0.1972,
+      "false_alarms": 2382,
+      "alerts": 2967
+    },
+    {
+      "rule": "Single reading, tuned to catch 40% (calibration)",
+      "threshold": 0.17988,
+      "caught": 0.2803,
+      "right": 0.2342,
+      "false_alarms": 1462,
+      "alerts": 1909
+    },
+    {
+      "rule": "Single reading, tuned to catch 30% (calibration)",
+      "threshold": 0.22517,
+      "caught": 0.1944,
+      "right": 0.2682,
+      "false_alarms": 846,
+      "alerts": 1156
+    },
+    {
+      "rule": "Two risky readings in a row, tuned to catch 50% (calibration)",
+      "threshold": 0.0481,
+      "caught": 0.321,
+      "right": 0.12,
+      "false_alarms": 3756,
+      "alerts": 4268
+    }
+  ]
+}

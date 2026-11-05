@@ -145,3 +145,5 @@
 @media(max-width:760px){.hr-rows{grid-template-columns:1fr}}
 .cockpit .patient-facts{grid-template-columns:repeat(5,minmax(0,1fr))}.patient-facts .fact-note{display:block;font-size:12px;color:#60774f;margin-top:2px}
 @media(max-width:760px){.cockpit .patient-facts{grid-template-columns:repeat(2,minmax(0,1fr))}}
+.tradeoff{margin:18px 0}.tradeoff h4{font-size:15px;margin:0 0 6px}.tradeoff table{width:100%;border-collapse:collapse;font-size:14px}.tradeoff th,.tradeoff td{text-align:left;padding:8px 10px;border-bottom:1px solid rgba(47,90,61,.12)}.tradeoff th{font-weight:600;color:#60774f;font-size:12.5px}.tradeoff tbody tr:first-child td{font-weight:600}
+.compare-checks .tradeoff h4{display:none}

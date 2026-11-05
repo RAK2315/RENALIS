@@ -7,8 +7,8 @@ type TourStep={page:WorkspacePage;title:string;seeing:string;meaning:string;tryT
 export const tourSteps:TourStep[]=[
   {page:'investigation',selector:'#journey-memory',
     title:'Learning from the past',
-    seeing:'Meera is 80 minutes into a four-hour dialysis session. Before predicting anything, the twin studies her earlier sessions.',
-    meaning:'The left number is how fast an average patient’s body moves water back into the blood. The right number is Meera’s own rate, learned from her history. A personal number makes the forecast fit her rather than an average person.',
+    seeing:'Meera is partway through a four-hour dialysis session. Before predicting anything, the twin reads her health record and earlier sessions.',
+    meaning:'Three numbers for how fast her body moves water back into the blood. Left: an average patient. Middle: adjusted for her low albumin blood test. Right: refined from her past sessions. A personal number makes the forecast fit her rather than an average person.',
     tryThis:'Open “See the past sessions it learned from” to see each earlier session and how low her blood pressure went.'},
   {page:'investigation',selector:'#journey-physiology',
     title:'What is happening inside her body',

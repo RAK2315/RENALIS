@@ -1,270 +1,179 @@
 # RENALIS
 
-**An evidence-aware digital twin for dialysis research.**
+**A digital twin for dialysis that warns before blood pressure crashes, and shows why.**
 
-RENALIS compares competing physiological explanations, identifies the next useful measurement, and shows how an acquired result changes the model's reasoning.
+[![Verify RENALIS](https://github.com/RAK2315/RENALIS/actions/workflows/verify.yml/badge.svg)](https://github.com/RAK2315/RENALIS/actions/workflows/verify.yml) [![License: MIT](https://img.shields.io/badge/License-MIT-63dbc0.svg)](LICENSE) [![Live app](https://img.shields.io/badge/Live-renalis--one.vercel.app-d4edaa.svg)](https://renalis-one.vercel.app) [![Demo video](https://img.shields.io/badge/Demo-20%20min-65c9f1.svg)](https://www.youtube.com/watch?v=ZcWNYMtM1tI)
 
-[![Verify RENALIS](https://github.com/RAK2315/RENALIS/actions/workflows/verify.yml/badge.svg)](https://github.com/RAK2315/RENALIS/actions/workflows/verify.yml) [![License: MIT](https://img.shields.io/badge/License-MIT-63dbc0.svg)](LICENSE) [![Demo: 20 minutes](https://img.shields.io/badge/Demo-20%20minutes-65c9f1.svg)](https://www.youtube.com/watch?v=ZcWNYMtM1tI) [![Live demo](https://img.shields.io/badge/Live-renalis--one.vercel.app-d4edaa.svg)](https://renalis-one.vercel.app)
+**[Open the live app](https://renalis-one.vercel.app)** · [Watch the demo](https://www.youtube.com/watch?v=ZcWNYMtM1tI) · [How it works](#how-it-works) · [Results](#results-including-what-didnt-work) · [Run it locally](#run-it-locally)
 
-[Open the live app](https://renalis-one.vercel.app) · [Watch the demo](https://www.youtube.com/watch?v=ZcWNYMtM1tI) · [Quick start](#quick-start) · [Architecture](#architecture-and-project-presentation) · [Results](#evaluated-outcomes-and-limits) · [Submission checklist](#organizer-submission-checklist)
+![RENALIS home page: warn before blood pressure falls, then explain why](public/readme/hero.webp)
 
-The live app's backend runs on a free Hugging Face Space, which can take ~30-60 seconds to wake up if it has been idle — reload if the first request times out.
+> Research prototype. Every patient in the app is made up. It is not a medical device and has not been tested on real patients in care.
+> The free server sleeps when idle, so the first load can take about a minute.
 
-[![RENALIS project presentation cover](public/readme/renalis-cover.webp)](https://www.youtube.com/watch?v=ZcWNYMtM1tI)
+---
 
-## Overview
+## The problem
 
-During a dialysis session, similar blood-pressure histories can be compatible with different hidden physiological processes. RENALIS preserves that disagreement instead of collapsing it into a single explanation. A researcher can inspect the model state, compare hypothetical fluid-removal profiles, preview possible observations, acquire a synthetic device reading, and review the resulting evidence trail.
+- During dialysis, a machine removes the extra water that failed kidneys can't. If it removes water faster than the body can refill the blood, **blood pressure falls**. Patients get dizzy, cramp or faint.
+- Staff usually notice only after it happens. The same falling number can also have **different causes**, and each needs a different response.
+- About **138 million** Indian adults had chronic kidney disease in 2023, the second-highest number in the world ([GBD 2023, The Lancet](https://doi.org/10.1016/S0140-6736(25)01853-7)).
 
-The application combines a patient-history learner, a four-family particle model, an adaptive measurement planner, and an auditable research workspace. A separate retrospective pipeline evaluates prediction on the public HEMOBP dataset.
+![A bad dialysis session: blood pressure slides below 90 late in the session; RENALIS warns about 30 minutes earlier](public/readme/problem.webp)
 
-**Project status:** working research prototype, software release **0.4**. Built-in patients and device streams are fictional. Clinical deployment, treatment control and prospective patient benefit have not been established.
+## What RENALIS does
 
-## Problem statement and healthcare use case
+A live virtual copy of one patient, updated as each reading arrives.
 
-A falling blood-pressure trace alone may not distinguish volume depletion from vascular or cardiac response limitations. A risk score also does not explain which additional measurement could help separate those possibilities.
+| | Step | In plain words |
+|---|---|---|
+| 1 | **Learn** | Reads her health record (blood tests, medicines) and past sessions to learn how fast her body refills the blood. |
+| 2 | **Predict** | Every few minutes, works out the chance her blood pressure falls to 90 or below in the next 30 minutes. |
+| 3 | **Explain** | Keeps four possible causes side by side: not enough blood volume, blood vessels not tightening, heart not pumping harder, or a mix. |
+| 4 | **Suggest** | Picks the one extra check that would best tell the causes apart, and says whether it's worth the cost. |
 
-RENALIS supports **research review during maintenance hemodialysis**. Its central question is: **given the evidence available now, which feasible observation could clarify the remaining disagreement?** The workspace exposes model assumptions, conditional predictions, acquisition constraints and unresolved uncertainty. It does not send treatment commands to a dialysis machine.
+![Patient twin screen for Meera at minute 70: drop likely soon](public/readme/twin.webp)
 
-## Product walkthrough
+### Try it in one minute
 
-![RENALIS evidence journey showing preceding-session learning and model compartments](public/readme/workspace.webp)
+1. Open the [step-by-step story for Meera](https://renalis-one.vercel.app/workspace?view=investigation&patient=RNL-014&minute=90).
+2. Drag the **session time** slider to minute 50, then 70, then 90. The risk goes from **0%** to about **80%** to **100%**. At minute 70 her blood pressure still looks normal, but the twin warns about 28 minutes ahead.
+3. In Step 4, press **Take this measurement** and watch the cause bar shift.
 
-The evidence journey keeps six connected stages at the same patient and replay cutoff:
+## How it works
 
-| Stage | What the researcher can inspect |
-| --- | --- |
-| **Learn** | A refill prior fitted from six preceding completed synthetic sessions, with source fits and lineage |
-| **Understand** | Estimated fluid compartments, observed machine settings and authored physiological relationships |
-| **Compare** | Volume/refill, vascular, cardiac and mixed-response families, with 48 particles per family |
-| **Ask** | Noisy measurement predictions, possible-result previews and the next feasible discriminator |
-| **Review** | Acquisitions, failures, artifacts, appended corrections and immutable investigation snapshots |
-| **Verify** | Retrospective prediction results and independent synthetic policy results, including negative findings |
+Two kinds of data feed one virtual patient:
 
-### Adaptive measurement selection
+```mermaid
+flowchart LR
+  subgraph H[Patient history]
+    R[Health record<br/>albumin, diagnoses, medicines]
+    S[Past sessions<br/>blood pressure, water removed]
+  end
+  subgraph L[Live session]
+    C[Blood pressure cuff<br/>every 5 min]
+    M[Dialysis machine<br/>water removal speed]
+    W[Smartwatch<br/>heart rate]
+  end
+  H --> G{Time check<br/>only what was known then}
+  L --> G
+  G --> T[Patient twin<br/>192 possible versions of her]
+  G --> X[Cause lab<br/>4 possible causes]
+  T --> D[Doctor's screen<br/>risk, what-if, log]
+  X --> D
+```
 
-The demonstration follows the fictional patient **Meera, RNL-014, at minute 90**. After a cardiac-output reading, the planner recomputes which observation would best separate the surviving explanations.
-
-![Adaptive planner selecting relative blood volume after an acquired cardiac-output reading](public/readme/adaptive-planner.webp)
-
-| Step | Evidence or computation | What changes |
-| --- | --- | --- |
-| 1. Acquire cardiac output | **3.74 L/min** | Cardiac support is **51.7%** and volume/refill support is **46.2%**. Both remain plausible. |
-| 2. Select the next measurement | **Relative blood volume** | The remaining families predict different noisy distributions: medians **83.87%** and **87.81%** of starting volume. |
-| 3. Acquire the actual synthetic result | **85.0% RBV** | Support shifts to **66.9%** volume/refill and **31.8%** cardiac. The result remains inconclusive. |
-| 4. Reassess | Recompute from released evidence | Continue only if a feasible observation offers useful separation and the current authority guards permit it. |
-
-The planner selects the next question without a manually supplied resolving value. Overlapping predictions can still leave uncertainty. Model support describes compatibility within the authored model bank, not the probability of a clinical diagnosis.
+![Step 1: average patient 0.88 L/h, adjusted for her low albumin to 0.82, refined by past sessions to 0.76](public/readme/learn.webp)
 
 <details>
-<summary>View the acquired RBV result</summary>
+<summary><b>More detail on the model</b></summary>
 
-![Actual synthetic RBV acquisition and the remaining volume-versus-cardiac ambiguity](public/readme/acquired-result.webp)
+- **History sets the starting point.** The average refill speed (0.88 L/h) is adjusted for her albumin blood test, then refined from six earlier sessions.
+- **The twin.** 192 slightly different versions of the patient, each with its own refill speed and body response, run on a simple two-tank water model (blood and tissues). Each new blood pressure reading, and the smartwatch heart rate every 5 minutes, re-weights them. The risk % is the share that fall to 90 or below within 30 minutes.
+- **The cause lab.** 48 versions for each of four causes. Heart failure or a beta-blocker in the record makes "heart not pumping harder" more likely at the start.
+- **The next check.** For each possible check (re-check blood pressure, blood volume sensor, heart output), it predicts the result each cause expects. A check is useful when the causes expect very different results.
+- **Safety checks.** No forecast from future readings, no early warning when pressure is already low, and the warning pauses if the last reading is more than 15 minutes old.
+- **Recorded but not used:** haemoglobin and sodium. **Genetic markers: not used,** because no proven marker predicts this outcome.
+
+Full equations and assumptions: [model card](docs/model-card.md).
 
 </details>
 
-[Follow the click-by-click investigation](docs/demo-walkthrough-v04.md#adaptive-follow-up-after-374-lmin).
+![Step 4: the suggested check, the result each cause expects, and the chance of backing the wrong cause before and after](public/readme/planner.webp)
 
-### Additional research capabilities
+## Results, including what didn't work
 
-- **Action-loss comparison:** evaluate hypothetical profiles while accounting for waiting, acquisition failure and declared burden. Information gain and action value remain separate objectives.
-- **Evidence safeguards:** withhold scenario authority for current low BP, stale readings and completed sessions, and expose poor model fit.
-- **Longitudinal transport:** explore authored intake/output intervals and later sessions with mass-balance checks.
-- **Interoperability example:** export fictional FHIR R4 Patient, Device and BP Observation resources with reference and unit checks.
+We ran three tests. None of them shows yet that RENALIS helps real patients.
 
-## Demo video
+**1. Real dialysis records (HEMOBP, a public dataset from Taiwan).** Patients split three ways with no overlap: 563 to learn from, 141 to tune, **176 held back for testing** (18,420 sessions).
 
-**[Watch the complete 20-minute demonstration](https://www.youtube.com/watch?v=ZcWNYMtM1tI)**
+| Predicting the next blood pressure reading | Average miss (mmHg) |
+|---|---:|
+| Just repeat the last reading | 12.2 |
+| Live session data | 11.4 |
+| Live data + age and sex | 11.3 |
+| **Live data + past sessions** | **11.2** |
 
-The video is **Unlisted**, lasts **20:00**, and is available without signing in. Anonymous YouTube player metadata was checked on 20 October 2026. See the [submission verification record](docs/submission-verification.json).
+- Warnings before a drop to 90 or below: it **caught 61% of drops**, but **only 14% of warnings were right**. That is too many false alarms for real use. Drops are rare (about 2.6 in every 100 moments), which is why false alarms pile up. Stricter rules cut false alarms but miss more drops: catching 47% instead of 61% removes 43% of the false alarms. There is no free fix with this data.
+- **The twin itself on real data: not good enough yet.** Across 3,574 moments from 93 test patients it missed by 12.8 mmHg, against 12.1 for repeating the last reading. Its body model was built around our made-up patients and expects drops that real patients often don't have. HEMOBP has no heart rate or blood tests, so those inputs remain untested on real data.
 
-| Timestamp | Chapter |
-| --- | --- |
-| [00:00](https://www.youtube.com/watch?v=ZcWNYMtM1tI&t=0s) | The problem, product and architecture |
-| [05:00](https://www.youtube.com/watch?v=ZcWNYMtM1tI&t=300s) | Competing explanations and adaptive CO-to-RBV investigation |
-| [10:00](https://www.youtube.com/watch?v=ZcWNYMtM1tI&t=600s) | Evidence, evaluations and measured limitations |
-| [15:00](https://www.youtube.com/watch?v=ZcWNYMtM1tI&t=900s) | Safeguards, reproducibility and next validation steps |
+![Of every 100 real drops, 61 were warned in time; of every 100 warnings, 14 were real](public/readme/dots.webp)
 
-## Quick start
+**2. Stress test (192 hard made-up cases).** Does picking the smartest check lead to better decisions than just re-checking blood pressure? **Not yet.** Re-checking blood pressure did best (average mistake 0.222 vs 0.241). We kept this result visible.
 
-### Requirements
+**3. Demo patients.** The twin misses by about 1.9 mmHg on the made-up sessions, against 13.2 for repeating the last reading. The same team built the patients and the model, so this checks the software works, not that it is accurate.
 
-- **Python 3.10**
-- **Node.js 22.12 or later**; local verification used Node.js 24
-- Git and npm
+Raw results: [real data](docs/observed-v04.json) · [stress test](docs/policy-validation-v04.json) · [twin on real data](docs/twin-hemobp.json) · [warning trade-off](docs/alarm-tradeoff.json)
 
-The built-in demonstration uses local synthetic data and does not require downloading the observed clinical dataset or voice models.
+## Tech stack
 
-### Install
+| Part | Built with |
+|---|---|
+| Website | React, TypeScript, Vite, Recharts |
+| Model and API | Python, FastAPI, NumPy (particle filter, written from scratch) |
+| Real-data test | pandas, scikit-learn (gradient-boosted trees), patient-separated splits |
+| Storage | SQLite: every reading, correction and note is kept, never erased |
+| Hosting | Vercel (website), Hugging Face Spaces (API) |
+| Checks | 57 unit tests, release checks and GitHub Actions on every push |
 
-```powershell
+## Run it locally
+
+Needs Python 3.10 and Node.js 22 or later.
+
+```bash
 git clone https://github.com/RAK2315/RENALIS.git
 cd RENALIS
 python -m venv .venv
-.venv/Scripts/python.exe -m pip install -r requirements-lock.txt
+.venv/Scripts/python.exe -m pip install -r requirements-lock.txt   # macOS/Linux: .venv/bin/python
 npm ci
 ```
 
-On Linux or macOS, use `.venv/bin/python` instead of `.venv/Scripts/python.exe` in these commands.
+Start the API, then the website, in two terminals:
 
-### Run
-
-Start the API in one terminal:
-
-```powershell
-.venv/Scripts/python.exe -m uvicorn backend.app:app --host 127.0.0.1 --port 8000
-```
-
-Start the interface in another terminal:
-
-```powershell
+```bash
+.venv/Scripts/python.exe -m uvicorn backend.app:app --port 8000
 npm run dev
 ```
 
-Open **[http://127.0.0.1:5173/](http://127.0.0.1:5173/)**. For the featured case, open the [minute-90 investigation](http://127.0.0.1:5173/workspace?view=investigation&patient=RNL-014&minute=90). API documentation is available at **[http://127.0.0.1:8000/docs](http://127.0.0.1:8000/docs)** while the API is running.
+Open [http://127.0.0.1:5173](http://127.0.0.1:5173). On Windows, `scripts/start.ps1` starts both.
 
-Windows users can also launch the installed application with `scripts/start.ps1`.
+Run the checks:
 
-## Architecture and project presentation
-
-The current implementation runs as a React browser workspace, a FastAPI service and a local SQLite evidence store. The inference components share one Python service. The observed-data benchmark runs separately and supplies aggregate evaluation reports.
-
-[![RENALIS local system containers, service responsibilities and SQLite evidence storage](public/readme/architecture.webp)](output/pdf/RENALIS_Architecture_v06.pdf)
-
-| Resource | PDF | Editable PowerPoint |
-| --- | --- | --- |
-| **Architecture** - six views covering containers, inference, request sequence, adaptive planning, persistence and evaluation boundaries | [Architecture PDF](output/pdf/RENALIS_Architecture_v06.pdf) | [Architecture PPTX](output/presentations/RENALIS_Architecture_v06_Professional_Final.pptx) |
-| **Project presentation** - 20 slides covering the use case, actual product, model reasoning, results and next steps | [Presentation PDF](output/pdf/RENALIS_Project_Presentation_v06.pdf) | [Presentation PPTX](output/presentations/RENALIS_Project_Presentation_v06_Design_Final.pptx) |
-
-The PowerPoint files retain editable labels, diagrams and charts. [Implementation decisions](docs/implementation-decisions-v04.md) explain why the model and evidence boundaries are structured this way.
-
-## Technical stack and AI/ML details
-
-| Layer | Implementation |
-| --- | --- |
-| Interface | React, TypeScript, Vite, Recharts, Lucide |
-| API and inference | FastAPI, Python, NumPy |
-| Persistence | SQLite with acquisition records, measurements, corrections and saved revisions |
-| Retrospective evaluation | pandas, scikit-learn, patient-separated fit/calibration/test sets |
-| Reproducibility | Pinned Python dependencies, npm lockfile, unit tests, browser checks and GitHub Actions |
-
-The physiological model uses a likelihood-based history learner, particle state estimation, four authored response families and Gaussian observation likelihoods. Numerical quadrature integrates possible noisy measurement outcomes.
-
-The adaptive selector ranks **pair-conditional expected entropy reduction** when two families retain at least 10% support. Otherwise, it considers whole-bank information. Equipment availability, acquisition timing, failure, released evidence and authority guards constrain candidate measurements. Repeated observations currently assume conditionally independent noise.
-
-A separate action-value calculation estimates modeled loss reduction after waiting, failure and burden. Information gain is measured in bits; action value uses declared research-loss units. A useful discriminator need not improve the modeled action comparison.
-
-See the [model card](docs/model-card.md) for equations, intended use, calibration assumptions and limits.
-
-## Evaluated outcomes and limits
-
-### Observed-data prediction
-
-The HEMOBP evaluation contains **61,947 test windows from 176 patients**. Patient identities do not overlap across the fit, calibration and test sets.
-
-| Model | Test MAE, mmHg |
-| --- | ---: |
-| Last observed BP | 12.194 |
-| Dynamic inputs | 11.356 |
-| Demographics + dynamic inputs | 11.328 |
-| Preceding history + dynamic inputs | 11.161 |
-
-The paired history increment is **-0.1665 mmHg** against demographics + dynamic inputs, with a patient-cluster interval of **[-0.2298, -0.1099]**. This is a small retrospective predictive contribution; clinical importance has not been established.
-
-For the next-measured-reading event task, sensitivity is **61.25%**, positive predictive value is **13.51%**, and empirical coverage of the nominal 90% range is **86.74%**. Missed events, false alerts and undercoverage remain material limitations.
-
-### Independent synthetic policy study
-
-The frozen holdout contains **192 cases and 768 policy records**, with a one-acquisition budget per policy. Mean physiology regret is **0.22170 for fixed cuff** and **0.24145 for decision value**, where lower is better. Decision-value selection does not outperform fixed cuff overall.
-
-The newer sequential discriminator passes numerical, software and actual-interface workflow checks. Its independent multi-acquisition policy evaluation is still planned. The earlier study does not validate the newer selector.
-
-### Interpretation boundaries
-
-The observed cohort uses an empirical eight-hour cross-table clock alignment that needs independent confirmation. Only **2,516,989 of 4,366,298 packets** match the declared interval and elapsed-time checks, so exclusions may bias the cohort. The next distinct measured-reading endpoint differs from continuous hypotension and the synthetic model's 30-minute crossings.
-
-Clinical collaborators, approvals, paired physiological calibration, external silent validation, workload assessment and prospective impact studies remain future work. The FHIR export demonstrates a mapping example rather than live EHR integration or ABDM certification.
-
-[Observed report](docs/observed-v04.json) · [Policy report](docs/policy-validation-v04.json) · [Preserved initial policy report](docs/policy-validation-v04-initial.json) · [Study protocol](docs/clinical-study-protocol.md)
-
-## Verification and reproducibility
-
-Run the core checks after installing dependencies:
-
-```powershell
-.venv/Scripts/python.exe -m unittest discover -s tests -v
+```bash
+.venv/Scripts/python.exe -m unittest discover -s tests
 npm run build
 .venv/Scripts/python.exe scripts/verify-release.py
 ```
 
-The published release passed **50 backend tests**, a production build and aggregate-release contract checks. Browser verification covers the actual evidence journey, adaptive measurement acquisition and layouts at 320, 390, 768, 1024 and 1440 pixels. Software checks do not establish clinical validity.
+The real-data tests need the HEMOBP files, which are not redistributed here. See [the evaluation script](scripts/evaluate_observed_v04.py).
 
-Additional browser checks are available as `npm run test:browser:journey` and `npm run test:browser:adaptive`. They require Playwright and the running frontend on port 5173; the scripts start isolated API/database instances. See [journey checks](scripts/check-journey.cjs) and [adaptive checks](scripts/check-adaptive.cjs) for their environment settings.
+## Documents
 
-Reproducing the observed-data study requires separately obtained, checksum-verified HEMOBP v3 tables. Raw observed records are not redistributed. The [evaluation protocol](docs/evaluation-protocol-v04.json) and [evaluation script](scripts/evaluate_observed_v04.py) describe the cohort and procedure.
+| | |
+|---|---|
+| Project presentation | [PDF](output/pdf/RENALIS_Project_Presentation_v06.pdf) · [PowerPoint](output/presentations/RENALIS_Project_Presentation_v06_Design_Final.pptx) |
+| Architecture diagram | [PDF](output/pdf/RENALIS_Architecture_v06.pdf) · [PowerPoint](output/presentations/RENALIS_Architecture_v06_Professional_Final.pptx) |
+| Model details and limits | [Model card](docs/model-card.md) |
+| Proposed study with doctors | [Protocol](docs/clinical-study-protocol.md) |
+| Demo video (20 min) | [YouTube](https://www.youtube.com/watch?v=ZcWNYMtM1tI) |
 
 ## Repository layout
 
 ```text
-backend/     FastAPI endpoints, physiological models and experiment logic
-src/         React application and evidence journey
-docs/        Model card, evaluation reports, protocols and walkthroughs
-tests/       Backend and numerical regression checks
-scripts/     Evaluation, release checks and local launch utilities
-public/      Diagram previews, screenshots and attributed visual assets
-output/      Architecture, presentation and research documents
-video/       Checkpointed video and presentation production sources
+backend/   API, patient twin, cause lab, health records
+src/       Website
+tests/     Unit tests
+scripts/   Real-data tests, release checks, launch script
+docs/      Model card, test results, protocols
+output/    Presentation and architecture files
 ```
 
-## Documentation
+## Team
 
-| Document | Purpose |
-| --- | --- |
-| [Project guide](docs/project-guide.md) | Product and research context |
-| [Model card](docs/model-card.md) | Model definitions, assumptions and intended use |
-| [Demo walkthrough](docs/demo-walkthrough-v04.md) | Reproduce the featured investigation |
-| [Implementation decisions](docs/implementation-decisions-v04.md) | Reasoning behind architecture and evidence contracts |
-| [Research dossier](output/pdf/RENALIS_Research_Strategy_and_Master_Plan.pdf) | Research review and development plan |
-| [Clinical study protocol](docs/clinical-study-protocol.md) | Proposed validation work, not completed studies |
-| [Capture schema](docs/data-capture-schema.json) | Proposed structured data collection |
-| [Video production](video/submission_v05/README.md) | Resume the four-chapter film build |
-| [Visual materials](video/submission_v06/README.md) | Architecture and presentation sources and asset provenance |
+**Sigmoid** · Rehaan (solo) · JSS University, Noida · [@RAK2315](https://github.com/RAK2315)
 
-## Team details
+Built for the Happiest Health Digital Twin Challenge 2026.
 
-| Field | Details |
-| --- | --- |
-| **Team** | Sigmoid |
-| **Member** | Rehaan - solo entrant |
-| **Role** | Project design, development and submission |
-| **College** | JSS University, Noida |
-| **GitHub** | [RAK2315](https://github.com/RAK2315) |
+## License
 
-## License and attribution
-
-The project code is available under the **[MIT license](LICENSE)**. Dataset, dependency, icon and voice-model terms are documented in [third-party notices](THIRD_PARTY_NOTICES.md).
-
-The cover is a conceptual generated illustration. Interface screenshots use fictional patient/device streams. The video uses synthetic Kokoro narration and an original procedural score. Visual sources and the cover-generation prompt are recorded in [asset provenance](public/presentation-assets/provenance.json).
-
-## Organizer submission checklist
-
-The following table maps all twelve mandatory README items from the submission form to their locations.
-
-| Required item | Location |
-| --- | --- |
-| Team details | [Sigmoid and Rehaan](#team-details) |
-| College/incubator information | [JSS University, Noida](#team-details) |
-| Project title | RENALIS - Evidence-aware Dialysis Digital Twin |
-| Problem statement | [Problem statement](#problem-statement-and-healthcare-use-case) |
-| Healthcare use case | [Maintenance hemodialysis research review](#problem-statement-and-healthcare-use-case) |
-| Technical stack | [Technical stack](#technical-stack-and-aiml-details) |
-| AI/ML model or framework details | [Model details](#technical-stack-and-aiml-details) and [model card](docs/model-card.md) |
-| 15-20 minute unlisted YouTube demo | [Verified unlisted 20:00 video](https://www.youtube.com/watch?v=ZcWNYMtM1tI) |
-| Open-source license details | [MIT](LICENSE) and [third-party notices](THIRD_PARTY_NOTICES.md) |
-| Architecture diagram in PDF/PPT format | [PDF](output/pdf/RENALIS_Architecture_v06.pdf) and [PPTX](output/presentations/RENALIS_Architecture_v06_Professional_Final.pptx) |
-| Presentation covering project details and outcomes | [PDF](output/pdf/RENALIS_Project_Presentation_v06.pdf) and [PPTX](output/presentations/RENALIS_Project_Presentation_v06_Design_Final.pptx) |
-| Public access without additional permissions | [Public repository](https://github.com/RAK2315/RENALIS), linked files and unlisted video; [access record](docs/submission-verification.json) |
-
-**Submission repository:** https://github.com/RAK2315/RENALIS
-
-The source and demo are published. Organizer form submission and its confirmation remain the entrant's final action. See the [final submission steps](docs/UPLOAD_NEXT.md) and [item-by-item checklist](docs/submission-checklist.md).
+Code: [MIT](LICENSE). The HEMOBP dataset keeps its CC BY 4.0 licence. Other terms: [third-party notices](THIRD_PARTY_NOTICES.md).

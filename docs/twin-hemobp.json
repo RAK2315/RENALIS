@@ -1,0 +1,37 @@
+{
+  "status": "evaluated",
+  "protocol": {
+    "version": "twin-on-hemobp/0.1",
+    "cohort": "observed-evaluation/0.4 audited cohort and patient split (seeds 42, 43)",
+    "particles": 192,
+    "priors": "Population only: refill 0.88 L/h (sd 0.24), compensation 18 (sd 4), plasma 4.5% of start weight; baseline = first reading of the session",
+    "excess_water": "start weight minus dry weight, floored at 0.5 L",
+    "likelihood_sd_mm_hg": 9.0,
+    "volume_sensitivity": "Learned per session: gamma ~ lognormal around 1.0 (demo patients use 2.65)",
+    "endpoint": "Same as v0.4: next distinct reading, 5-35 minutes ahead; event = next reading <= 90",
+    "threshold": "Chosen on calibration patients for 61% sensitivity, matching the v0.4 classifier",
+    "not_used": "Smartwatch heart rate and lab results (HEMOBP has neither)"
+  },
+  "test_patients": 93,
+  "test_windows": 3574,
+  "sessions_limit": 1000,
+  "bias_mm_hg": -1.926,
+  "mae_mm_hg": {
+    "Last observed BP": 12.132,
+    "RENALIS twin": 12.82
+  },
+  "event": {
+    "threshold": 0.0,
+    "positive_windows": 90,
+    "sensitivity": 1.0,
+    "ppv": 0.0252,
+    "pr_auc": 0.0586
+  },
+  "runtime_seconds": 115,
+  "limitations": [
+    "Population priors only; per-patient history learning was not run on HEMOBP.",
+    "HEMOBP has no heart rate or lab results, so those inputs are untested on real data.",
+    "Plasma volume is assumed from body weight, not measured.",
+    "Same clock-alignment assumption as the v0.4 audit."
+  ]
+}

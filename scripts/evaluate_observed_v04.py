@@ -32,7 +32,7 @@ def session_time(d,column):
     return pd.to_datetime(s.where(~only_time,combined),format='mixed',errors='coerce')
 
 
-def audit_cohort():
+def audit_cohort(return_readings=False):
     for name in FILES:validate_file(DATA/name)
     d=pd.read_csv(DATA/'d1.csv',dtype={'pid':str})
     d['pid']=d.pid.str.replace(r'\.0$','',regex=True)
@@ -92,6 +92,7 @@ def audit_cohort():
         'clock_offset_status':PROTOCOL['clock_offset_status'],
         'current_session_end_fields_excluded':True,'history_end_before_current_start':bool(d.history_available.all()),
         'checksums':'All three versioned deposit files verified'}
+    if return_readings:return cohort,features,audit,v,d
     return cohort,features,audit
 
 
