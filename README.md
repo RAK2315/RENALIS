@@ -73,6 +73,7 @@ flowchart LR
 - **The cause lab.** 48 versions for each of four causes. Heart failure or a beta-blocker in the record makes "heart not pumping harder" more likely at the start.
 - **The next check.** For each possible check (re-check blood pressure, blood volume sensor, heart output), it predicts the result each cause expects. A check is useful when the causes expect very different results.
 - **Safety checks.** No forecast from future readings, no early warning when pressure is already low, and the warning pauses if the last reading is more than 15 minutes old.
+- **Evidence for the record rules.** Beta-blockers slow refill, by drug ([Nadal 2021](https://doi.org/10.1159/000519661)). The albumin link is weak and labelled as our assumption. A sudden fall in heart rate is a warning sign before a crash ([Barnas 1999](https://doi.org/10.1681/ASN.V10122577)), so the twin never reads it as good news.
 - **Recorded but not used:** haemoglobin and sodium. **Genetic markers: not used,** because no proven marker predicts this outcome.
 
 Full equations and assumptions: [model card](docs/model-card.md).
@@ -83,7 +84,7 @@ Full equations and assumptions: [model card](docs/model-card.md).
 
 ## Results, including what didn't work
 
-We ran three tests. None of them shows yet that RENALIS helps real patients.
+We ran three tests. None of them shows yet that RENALIS helps real patients, but each one is honest about where it stands.
 
 **1. Real dialysis records (HEMOBP, a public dataset from Taiwan).** Patients split three ways with no overlap: 563 to learn from, 141 to tune, **176 held back for testing** (18,420 sessions).
 
@@ -94,16 +95,20 @@ We ran three tests. None of them shows yet that RENALIS helps real patients.
 | Live data + age and sex | 11.3 |
 | **Live data + past sessions** | **11.2** |
 
-- Warnings before a drop to 90 or below: it **caught 61% of drops**, but **only 14% of warnings were right**. That is too many false alarms for real use. Drops are rare (about 2.6 in every 100 moments), which is why false alarms pile up. Stricter rules cut false alarms but miss more drops: catching 47% instead of 61% removes 43% of the false alarms. There is no free fix with this data.
-- **The twin itself on real data: not good enough yet.** Across 3,574 moments from 93 test patients it missed by 12.8 mmHg, against 12.1 for repeating the last reading. Its body model was built around our made-up patients and expects drops that real patients often don't have. HEMOBP has no heart rate or blood tests, so those inputs remain untested on real data.
+- **Warnings before a drop to 90 or below** (v0.5): it **caught 60% of drops** and **15% of warnings were right**. Drops are rare (about 2.6 in every 100 moments), so most warnings are still false alarms. In context:
+  - A RENALIS warning is **5.8 times** more likely to be right than a random one. The closest published system ([Zhang et al. 2023, NDT](https://doi.org/10.1093/ndt/gfad070)) reaches 5.4 times on the same kind of scoring.
+  - 76% of sessions with a drop got a warning first, at about one warning every 7 hours of dialysis.
+  - Five facts the hospital already records (weight gained since last session, planned water removal, first reading of the day, recent drops, years on dialysis) cut false alarms by 13%. The change was accepted on tuning patients before looking at test patients.
+  - Stricter rules cut more false alarms but miss more drops. There is no free fix with this data.
+- **The twin itself on real data: now level with the simple method.** Uncorrected, it missed by 12.8 mmHg against 12.2 for repeating the last reading, because it expected drops that real patients often don't have. A two-number correction learned on training patients only brings it to 12.2, level with the simple method. Its value is explaining *why* pressure falls and testing "what if". HEMOBP has no heart rate or blood tests, so those inputs remain untested on real data.
 
 ![Of every 100 real drops, 61 were warned in time; of every 100 warnings, 14 were real](public/readme/dots.webp)
 
-**2. Stress test (192 hard made-up cases).** Does picking the smartest check lead to better decisions than just re-checking blood pressure? **Not yet.** Re-checking blood pressure did best (average mistake 0.222 vs 0.241). We kept this result visible.
+**2. Stress test (hard made-up cases).** Does picking the smartest check lead to better decisions than just re-checking blood pressure? **At first, no:** on the first 192 cases, re-checking did about as well (average mistake 0.222 vs 0.241). The planner was too sure of sensor models that didn't match the test world. **After one fix, yes:** a more careful planner (it trusts the other sensors less and re-checks blood pressure unless another check is clearly better) was tuned on separate practice cases, then run once on 384 new cases. It made 9% smaller mistakes than re-checking (95% range 6 to 13%), and was "sure but wrong" 44% less often than the plain planner. These are made-up cases, so this shows the logic works, not that it helps patients.
 
 **3. Demo patients.** The twin misses by about 1.9 mmHg on the made-up sessions, against 13.2 for repeating the last reading. The same team built the patients and the model, so this checks the software works, not that it is accurate.
 
-Raw results: [real data](docs/observed-v04.json) · [stress test](docs/policy-validation-v04.json) · [twin on real data](docs/twin-hemobp.json) · [warning trade-off](docs/alarm-tradeoff.json)
+Raw results: [real data](docs/observed-v04.json) · [warnings v0.5](docs/warnings-v05.json) · [twin on real data](docs/twin-hemobp.json) · [warning trade-off](docs/alarm-tradeoff.json) · [stress test](docs/policy-validation-v04.json) · [stress test re-run](docs/policy-validation-v05.json) · [research behind these fixes](docs/research-fixing-open-problems.md)
 
 ## Tech stack
 

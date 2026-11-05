@@ -1,7 +1,7 @@
 {
   "status": "evaluated",
   "protocol": {
-    "version": "twin-on-hemobp/0.1",
+    "version": "twin-on-hemobp/0.2",
     "cohort": "observed-evaluation/0.4 audited cohort and patient split (seeds 42, 43)",
     "particles": 192,
     "priors": "Population only: refill 0.88 L/h (sd 0.24), compensation 18 (sd 4), plasma 4.5% of start weight; baseline = first reading of the session",
@@ -9,25 +9,38 @@
     "likelihood_sd_mm_hg": 9.0,
     "volume_sensitivity": "Learned per session: gamma ~ lognormal around 1.0 (demo patients use 2.65)",
     "endpoint": "Same as v0.4: next distinct reading, 5-35 minutes ahead; event = next reading <= 90",
-    "threshold": "Chosen on calibration patients for 61% sensitivity, matching the v0.4 classifier",
+    "threshold": "Chosen on calibration patients for 61% sensitivity, matching the v0.4 classifier. Reported as unusable if only a zero threshold reaches it (that means alarm on everything)",
+    "correction": "Shrunk change: next = last reading + k x twin change + b. k (0 to 1) and b are picked on fit patients only, by lowest average miss. k = 0 is exactly \"repeat the last reading\"",
     "not_used": "Smartwatch heart rate and lab results (HEMOBP has neither)"
   },
-  "test_patients": 93,
-  "test_windows": 3574,
+  "test_patients": 88,
+  "test_windows": 3240,
   "sessions_limit": 1000,
-  "bias_mm_hg": -1.926,
+  "shrinkage": {
+    "k": 0.15,
+    "b_mm_hg": 0.02,
+    "fit_windows": 2574,
+    "fit_patients": 204,
+    "fit_mae_mm_hg": 10.681
+  },
+  "bias_mm_hg": 0.416,
+  "bias_raw_mm_hg": -2.036,
   "mae_mm_hg": {
-    "Last observed BP": 12.132,
-    "RENALIS twin": 12.82
+    "Last observed BP": 12.195,
+    "RENALIS twin, raw": 12.761,
+    "RENALIS twin": 12.172
   },
   "event": {
+    "usable": false,
     "threshold": 0.0,
-    "positive_windows": 90,
-    "sensitivity": 1.0,
-    "ppv": 0.0252,
-    "pr_auc": 0.0586
+    "positive_windows": 79,
+    "sensitivity": null,
+    "ppv": null,
+    "pr_auc": 0.0304,
+    "base_rate": 0.0244,
+    "note": "No threshold above zero reached 61% sensitivity on calibration patients, so the twin risk is not used as a warning on real data."
   },
-  "runtime_seconds": 115,
+  "runtime_seconds": 200,
   "limitations": [
     "Population priors only; per-patient history learning was not run on HEMOBP.",
     "HEMOBP has no heart rate or lab results, so those inputs are untested on real data.",

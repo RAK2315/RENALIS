@@ -1,0 +1,265 @@
+{
+  "status": "evaluated",
+  "version": "policy-holdout/0.5",
+  "protocol": {
+    "version": "policy-holdout/0.5",
+    "regimes": [
+      "volume",
+      "vascular",
+      "cardiac",
+      "mixed",
+      "omitted",
+      "noisy",
+      "basic_unit",
+      "late_failure"
+    ],
+    "rates": [
+      350,
+      500,
+      650,
+      800,
+      950,
+      1100,
+      1250,
+      1400
+    ],
+    "horizon": 30,
+    "development_seeds": [
+      100,
+      101,
+      102,
+      103,
+      104,
+      105,
+      106,
+      107,
+      108,
+      109,
+      110,
+      111,
+      112,
+      113,
+      114,
+      115,
+      116,
+      117,
+      118,
+      119,
+      120,
+      121,
+      122,
+      123
+    ],
+    "holdout_seeds": [
+      200,
+      201,
+      202,
+      203,
+      204,
+      205,
+      206,
+      207,
+      208,
+      209,
+      210,
+      211,
+      212,
+      213,
+      214,
+      215,
+      216,
+      217,
+      218,
+      219,
+      220,
+      221,
+      222,
+      223,
+      224,
+      225,
+      226,
+      227,
+      228,
+      229,
+      230,
+      231,
+      232,
+      233,
+      234,
+      235,
+      236,
+      237,
+      238,
+      239,
+      240,
+      241,
+      242,
+      243,
+      244,
+      245,
+      246,
+      247
+    ],
+    "seed_base": 720041,
+    "policies": [
+      "no_observation",
+      "fixed_cuff",
+      "information_gain",
+      "decision_value",
+      "robust"
+    ],
+    "robust_grid": {
+      "temper": [
+        1.5,
+        2.0,
+        3.0
+      ],
+      "margin": [
+        0.0,
+        0.005,
+        0.01
+      ]
+    },
+    "selection_rule": "Lowest mean regret on development seeds; ties go to the larger temper and margin",
+    "budget": "At most one acquisition; failure incurs burden and waiting",
+    "note": "Written before the first run. v0.4 seeds 0-23 are not used."
+  },
+  "protocol_sha256": "355d2eac844fcbc6e58a00caea8e0641553e8ecaeba392746c94b69067f780cf",
+  "chosen_on_development": {
+    "temper": 1.5,
+    "margin": 0.01,
+    "development_mean_regret": {
+      "t1.5_m0.0": 0.23731,
+      "t1.5_m0.005": 0.23776,
+      "t1.5_m0.01": 0.23593,
+      "t2.0_m0.0": 0.24907,
+      "t2.0_m0.005": 0.24679,
+      "t2.0_m0.01": 0.24679,
+      "t3.0_m0.0": 0.25068,
+      "t3.0_m0.005": 0.24894,
+      "t3.0_m0.01": 0.24998
+    }
+  },
+  "holdout_cases": 384,
+  "summaries": [
+    {
+      "policy": "no_observation",
+      "cases": 384,
+      "mean_regret": 0.25851,
+      "paired_delta_vs_cuff": -0.00219,
+      "seed_block_95_interval": [
+        -0.01832,
+        0.01005
+      ],
+      "confident_wrong_cases": 0,
+      "cases_worse_than_cuff": 42,
+      "non_cuff_checks": 0,
+      "by_regime": {
+        "volume": 0.20536,
+        "vascular": 0.50874,
+        "cardiac": 0.18214,
+        "mixed": 0.21429,
+        "omitted": 0.30932,
+        "noisy": 0.18748,
+        "basic_unit": 0.22679,
+        "late_failure": 0.23393
+      }
+    },
+    {
+      "policy": "fixed_cuff",
+      "cases": 384,
+      "mean_regret": 0.26069,
+      "paired_delta_vs_cuff": 0.0,
+      "seed_block_95_interval": [
+        0.0,
+        0.0
+      ],
+      "confident_wrong_cases": 0,
+      "cases_worse_than_cuff": 0,
+      "non_cuff_checks": 0,
+      "by_regime": {
+        "volume": 0.20179,
+        "vascular": 0.55037,
+        "cardiac": 0.22217,
+        "mixed": 0.21071,
+        "omitted": 0.31125,
+        "noisy": 0.1839,
+        "basic_unit": 0.22679,
+        "late_failure": 0.17857
+      }
+    },
+    {
+      "policy": "information_gain",
+      "cases": 384,
+      "mean_regret": 0.21804,
+      "paired_delta_vs_cuff": -0.04265,
+      "seed_block_95_interval": [
+        -0.05445,
+        -0.02883
+      ],
+      "confident_wrong_cases": 86,
+      "cases_worse_than_cuff": 26,
+      "non_cuff_checks": 336,
+      "by_regime": {
+        "volume": 0.19643,
+        "vascular": 0.45685,
+        "cardiac": 0.26278,
+        "mixed": 0.14643,
+        "omitted": 0.15464,
+        "noisy": 0.13825,
+        "basic_unit": 0.22679,
+        "late_failure": 0.1622
+      }
+    },
+    {
+      "policy": "decision_value",
+      "cases": 384,
+      "mean_regret": 0.23412,
+      "paired_delta_vs_cuff": -0.02657,
+      "seed_block_95_interval": [
+        -0.03682,
+        -0.01505
+      ],
+      "confident_wrong_cases": 126,
+      "cases_worse_than_cuff": 68,
+      "non_cuff_checks": 314,
+      "by_regime": {
+        "volume": 0.21786,
+        "vascular": 0.46031,
+        "cardiac": 0.24564,
+        "mixed": 0.17321,
+        "omitted": 0.23104,
+        "noisy": 0.16069,
+        "basic_unit": 0.21964,
+        "late_failure": 0.16458
+      }
+    },
+    {
+      "policy": "robust",
+      "cases": 384,
+      "mean_regret": 0.23609,
+      "paired_delta_vs_cuff": -0.02461,
+      "seed_block_95_interval": [
+        -0.03426,
+        -0.01448
+      ],
+      "confident_wrong_cases": 71,
+      "cases_worse_than_cuff": 53,
+      "non_cuff_checks": 299,
+      "by_regime": {
+        "volume": 0.21786,
+        "vascular": 0.46897,
+        "cardiac": 0.2436,
+        "mixed": 0.17143,
+        "omitted": 0.22913,
+        "noisy": 0.16426,
+        "basic_unit": 0.22679,
+        "late_failure": 0.16667
+      }
+    }
+  ],
+  "limitations": [
+    "Same authored stress world as v0.4: sensor values are fixed per regime, not produced by the planner.",
+    "Synthetic research task, not clinical efficacy."
+  ]
+}

@@ -70,12 +70,13 @@ PROJECT_DOCUMENTS={
     'presentation-pptx':('Project presentation (editable)','output/presentations/RENALIS_Project_Presentation_v06_Design_Final.pptx','PPTX','application/vnd.openxmlformats-officedocument.presentationml.presentation'),
     'implementation-decisions':('Implementation decisions and reasons','docs/implementation-decisions-v04.md','Markdown','text/markdown'),
     'submission-checklist':('Submission and release checklist','docs/submission-checklist.md','Markdown','text/markdown'),
-    'master-report':('Research, decisions and master plan','output/pdf/RENALIS_Research_Strategy_and_Master_Plan.pdf','PDF','application/pdf'),
     'release-plan':('Release 0.4 implementation and evidence ledger','docs/release-v04.md','Markdown','text/markdown'),
     'clinical-protocol':('Proposed study with doctors','docs/clinical-study-protocol.md','Markdown','text/markdown'),
     'observed-v04':('Real-data test results','docs/observed-v04.json','JSON','application/json'),
     'twin-real':('Twin run on real records','docs/twin-hemobp.json','JSON','application/json'),
     'alarm-tradeoff':('False-alarm trade-off','docs/alarm-tradeoff.json','JSON','application/json'),
+    'warnings-v05':('Warning results compared with published work','docs/warnings-v05.json','JSON','application/json'),
+    'policy-v05':('Stress test re-run (384 new cases)','docs/policy-validation-v05.json','JSON','application/json'),
     'policy-v04':('Stress test results (192 cases)','docs/policy-validation-v04.json','JSON','application/json'),
     'project-guide':('RENALIS project guide','docs/project-guide.md','Markdown','text/markdown'),
     'research-review':('Evidence review and validation protocol','docs/research-review-2026-10.md','Markdown','text/markdown'),
@@ -442,7 +443,8 @@ def correct_measurement(pid:str,measurement_id:int,body:CorrectionInput):
 @app.get('/api/release-evaluation')
 def release_evaluation():
     paths={'observed':'docs/observed-v04.json','policy':'docs/policy-validation-v04.json',
-           'twin_real':'docs/twin-hemobp.json','tradeoff':'docs/alarm-tradeoff.json'}
+           'twin_real':'docs/twin-hemobp.json','tradeoff':'docs/alarm-tradeoff.json',
+           'warnings':'docs/warnings-v05.json','policy_v05':'docs/policy-validation-v05.json'}
     return {key:json.loads((ROOT/path).read_text(encoding='utf-8')) if (ROOT/path).exists() else {'status':'not_run'} for key,path in paths.items()}
 
 

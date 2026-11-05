@@ -70,10 +70,11 @@ def pressure(plasma, reference, baseline, compensation):
 
 RESTING_HR = 72
 WATCH_NOISE_BPM = 2.5
+SUDDEN_HR_FALL_BPM = 10  # vs the reading 5 minutes earlier
 
 
 def hr_gain(patient_id: str) -> float:
-    """Beta-blockers blunt the heart-rate rise. Known from the health record."""
+    """Beta-blockers blunt the heart-rate rise. Known from the health record. The 0.4 is our assumption."""
     from .ehr import RECORDS
     record = RECORDS.get(patient_id)
     return .4 if record and any(m['beta_blocker'] for m in record['medicines']) else 1.
@@ -144,6 +145,7 @@ def _filter(p: Patient, cutoff: int, dynamic: bool = True, history: bool = True,
     weights = np.ones(n) / n
     log = []
     gain = hr_gain(p.id)
+    last_hr = None
     known = observations(p.id)[:cutoff + 1]
     for row in known:
         minute = row["minute"]
@@ -157,11 +159,16 @@ def _filter(p: Patient, cutoff: int, dynamic: bool = True, history: bool = True,
             likelihood = np.exp(-.5 * ((expected - row["sbp"]) / 3.5) ** 2) + 1e-12
             weights *= likelihood
             weights /= weights.sum()
-        if dynamic and wearable and minute % 5 == 2 and row.get("hr") is not None:
+        sudden_fall = last_hr is not None and row.get("hr") is not None and row["hr"] <= last_hr - SUDDEN_HR_FALL_BPM
+        if dynamic and wearable and minute % 5 == 2 and row.get("hr") is not None and not sudden_fall:
             # Smartwatch heart rate: tells how hard the body is fighting a falling blood volume.
+            # A sudden fall is skipped: it often comes before a reflex crash (Barnas 1999,
+            # doi 10.1681/ASN.V10122577), so it must never count as "volume is fine".
             hr_expected = expected_hr(plasma, reference, compensation, gain)
             weights *= np.exp(-.5 * ((hr_expected - row["hr"]) / 5.) ** 2) + 1e-12
             weights /= weights.sum()
+        if wearable and minute % 5 == 2 and row.get("hr") is not None:
+            last_hr = row["hr"]
         if dynamic and (row["sbp"] is not None or minute % 5 == 2):
             if 1 / np.sum(weights ** 2) < n * .55:
                 indices = rng.choice(n, size=n, p=weights)

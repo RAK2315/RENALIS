@@ -29,14 +29,14 @@ assert 'assumption' in observed['audit']['clock_offset_status']
 
 files=['README.md','LICENSE','THIRD_PARTY_NOTICES.md','docs/model-card.md','docs/clinical-study-protocol.md',
        'docs/data-capture-schema.json','docs/submission-checklist.md','docs/implementation-decisions-v04.md',
-       'docs/demo-walkthrough-v04.md','output/pdf/RENALIS_Architecture_v04.pdf',
-       'output/pdf/RENALIS_Project_Presentation_v04.pdf','output/pdf/RENALIS_Research_Strategy_and_Master_Plan.pdf']
+       'docs/demo-walkthrough-v04.md','output/pdf/RENALIS_Architecture_v06.pdf',
+       'output/pdf/RENALIS_Project_Presentation_v06.pdf']
 for f in files:assert (ROOT/f).stat().st_size>100,f
-for name,count in [('RENALIS_Architecture_v04_Final.pptx',3),('RENALIS_Project_Presentation_v04_Final.pptx',16)]:
+for name,count in [('RENALIS_Architecture_v06_Professional_Final.pptx',6),('RENALIS_Project_Presentation_v06_Design_Final.pptx',20)]:
     with zipfile.ZipFile(ROOT/'output/presentations'/name) as z:
         assert len([n for n in z.namelist() if n.startswith('ppt/slides/slide') and n.endswith('.xml')])==count
         assert len([n for n in z.namelist() if n.startswith('ppt/notesSlides/notesSlide') and n.endswith('.xml')])==count
-        if count==16:assert len([n for n in z.namelist() if n.endswith('.xlsx')])==2
+        if count==20:assert len([n for n in z.namelist() if n.endswith('.xlsx')])==4
 manifest={'status':'passed','policy_records':len(rows),'policy_cases':192,'observed_test_windows':observed['test_rows'],
           'administrative_publication_verified':False,'clinical_validation_completed':False,
           'files':{f:hashlib.sha256((ROOT/f).read_bytes()).hexdigest() for f in files}}

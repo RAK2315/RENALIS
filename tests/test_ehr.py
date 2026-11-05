@@ -22,6 +22,18 @@ class HealthRecordTests(unittest.TestCase):
         self.assertGreater(ehr.family_prior('RNL-041')[2], .25)
         self.assertAlmostEqual(sum(leela), 1, places=3)
 
+    def test_beta_blocker_lowers_refill_by_drug(self):
+        self.assertEqual(ehr.beta_blocker_refill_factor('RNL-014'), 1.)
+        self.assertEqual(ehr.beta_blocker_refill_factor('RNL-041'), .95)  # metoprolol, well dialysed
+        self.assertEqual(ehr.BETA_BLOCKER_REFILL['carvedilol'], .9)       # poorly dialysed, bigger effect
+        no_drug = ehr.POPULATION_REFILL_L_H * (1 + ehr.ALBUMIN_REFILL_SLOPE * (3.9 - ehr.REFERENCE_ALBUMIN_G_DL))
+        self.assertLess(ehr.lab_refill_prior('RNL-041'), round(no_drug, 4))
+
+    def test_assumed_sizes_are_labelled(self):
+        text = ' '.join(e['effect'] for e in ehr.record_summary('RNL-032')['effects'])
+        self.assertIn('our assumption', text)
+        self.assertIn('never reads it as good news', text)
+
     def test_prior_reaches_the_cause_comparison(self):
         cloud = base_cloud('RNL-032', 0)
         self.assertEqual(cloud.prior['family_prior'], ehr.family_prior('RNL-032'))

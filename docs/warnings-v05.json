@@ -1,0 +1,162 @@
+{
+  "status": "evaluated",
+  "protocol": {
+    "version": "warnings/0.5",
+    "cohort": "observed-evaluation/0.4 audited cohort and patient split (seeds 42, 43)",
+    "endpoint": "Next distinct measured SBP <=90; current SBP >90; elapsed gap 5-35 minutes",
+    "threshold_target_recall": 0.75,
+    "extra_features": {
+      "weight_gain_kg": "Weight gained since the last session ended (start weight minus last end weight)",
+      "planned_removal_frac": "Planned removal per kg: (start weight minus dry weight) / start weight",
+      "pre_sbp": "First blood pressure reading of this session",
+      "last10_drop_rate": "Share of the last 10 sessions with any reading at or below 90",
+      "last10_mean_nadir": "Average lowest reading over the last 10 sessions",
+      "vintage_years": "Years on dialysis (first_dialysis in idp.csv)",
+      "body_temp": "Body temperature at session start (d1.csv)",
+      "prior_low": "Readings at or below 90 earlier in this session",
+      "running_min_sbp": "Lowest reading so far in this session"
+    },
+    "adoption_rule": "Use v0.5 only if its PR-AUC on calibration patients beats v0.4",
+    "refractory_minutes": 30,
+    "decision_curve_thresholds": [
+      0.05,
+      0.1,
+      0.2
+    ]
+  },
+  "test_patients": 176,
+  "calibration_pr_auc": {
+    "v0.4": 0.2519,
+    "v0.5": 0.2558
+  },
+  "adopted": "v0.5",
+  "models": {
+    "v0.4": {
+      "windows": 61947,
+      "base_rate": 0.0257,
+      "threshold": 0.06424,
+      "caught": 0.6125,
+      "right": 0.1351,
+      "lift_over_chance": 5.25,
+      "pr_auc": 0.1793,
+      "false_alarms": 6255,
+      "alarms_with_30min_quiet": 5205,
+      "alarm_right_with_30min_quiet": 0.1406,
+      "alarms_per_session": 0.283,
+      "alarms_per_session_hour": 0.175,
+      "per_session": {
+        "sessions": 18420,
+        "sessions_with_drop": 1345,
+        "caught": 0.803,
+        "right": 0.314
+      },
+      "first_vs_repeat": {
+        "first_event_context": {
+          "caught": 0.5046,
+          "right": 0.1152
+        },
+        "recurrence_context": {
+          "caught": 0.8428,
+          "right": 0.1733
+        }
+      },
+      "decision_curve": [
+        {
+          "threshold": 0.05,
+          "false_alarms_accepted_per_catch": 19.0,
+          "net_benefit": 0.01057,
+          "alarm_everyone": -0.02553,
+          "never_alarm": 0.0
+        },
+        {
+          "threshold": 0.1,
+          "false_alarms_accepted_per_catch": 9.0,
+          "net_benefit": 0.00558,
+          "alarm_everyone": -0.0825,
+          "never_alarm": 0.0
+        },
+        {
+          "threshold": 0.2,
+          "false_alarms_accepted_per_catch": 4.0,
+          "net_benefit": 0.00149,
+          "alarm_everyone": -0.21782,
+          "never_alarm": 0.0
+        }
+      ]
+    },
+    "v0.5": {
+      "windows": 61947,
+      "base_rate": 0.0257,
+      "threshold": 0.06718,
+      "caught": 0.6,
+      "right": 0.1499,
+      "lift_over_chance": 5.82,
+      "pr_auc": 0.1876,
+      "false_alarms": 5429,
+      "alarms_with_30min_quiet": 4527,
+      "alarm_right_with_30min_quiet": 0.1579,
+      "alarms_per_session": 0.246,
+      "alarms_per_session_hour": 0.152,
+      "per_session": {
+        "sessions": 18420,
+        "sessions_with_drop": 1345,
+        "caught": 0.7576,
+        "right": 0.3564
+      },
+      "first_vs_repeat": {
+        "first_event_context": {
+          "caught": 0.4659,
+          "right": 0.1359
+        },
+        "recurrence_context": {
+          "caught": 0.8861,
+          "right": 0.1694
+        }
+      },
+      "decision_curve": [
+        {
+          "threshold": 0.05,
+          "false_alarms_accepted_per_catch": 19.0,
+          "net_benefit": 0.01142,
+          "alarm_everyone": -0.02553,
+          "never_alarm": 0.0
+        },
+        {
+          "threshold": 0.1,
+          "false_alarms_accepted_per_catch": 9.0,
+          "net_benefit": 0.00618,
+          "alarm_everyone": -0.0825,
+          "never_alarm": 0.0
+        },
+        {
+          "threshold": 0.2,
+          "false_alarms_accepted_per_catch": 4.0,
+          "net_benefit": 0.00167,
+          "alarm_everyone": -0.21782,
+          "never_alarm": 0.0
+        }
+      ]
+    }
+  },
+  "published_comparison": [
+    {
+      "study": "Zhang et al. 2023, Nephrol Dial Transplant",
+      "doi": "10.1093/ndt/gfad070",
+      "unit": "per BP reading",
+      "base_rate": 0.0406,
+      "caught": 0.65,
+      "right": 0.22,
+      "lift_over_chance": 5.4
+    },
+    {
+      "study": "Kim et al. 2026, Front Digit Health",
+      "doi": "10.3389/fdgth.2026.1804788",
+      "unit": "first drop only",
+      "right": 0.129
+    }
+  ],
+  "notes": [
+    "Lift over chance = share of warnings that are right, divided by the share of moments followed by a drop.",
+    "RENALIS counts a drop as a reading at or below 90; most papers use below 90."
+  ]
+}

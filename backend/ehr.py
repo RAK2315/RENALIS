@@ -1,11 +1,19 @@
 """Synthetic health records: labs, diagnoses and medicines for the built-in patients.
 
 Only some fields change the model, and each effect is an authored research
-assumption, not a fitted clinical coefficient:
+assumption, not a fitted clinical coefficient. Evidence for each one is in
+docs/research-fixing-open-problems.md:
 - Albumin sets the starting refill estimate before past sessions refine it.
-  Low albumin means weaker pull of water back into the blood.
+  Weak evidence: low albumin goes with more drops in cohorts, but a blood-volume
+  study found total protein, not albumin, tracked the early fall (Tanaka 2024,
+  doi 10.1159/000536073). Kept small and labelled as an assumption.
+- Beta-blockers lower refill. In a crossover study, dialysing under beta-blocker
+  effect lowered the refill fraction from 70% to 63% (Nadal 2021,
+  doi 10.1159/000519661). Drugs that dialysis removes poorly (carvedilol) were
+  linked to more drops than well-removed ones (metoprolol) (Assimon 2018,
+  doi 10.1053/j.ajkd.2018.02.350), so the penalty depends on the drug.
 - Heart failure or a beta-blocker makes "heart not pumping harder" more likely
-  at the start of the cause comparison.
+  at the start of the cause comparison. No source gives these sizes (x1.5, x1.3).
 Everything else is recorded and shown, but marked as not used.
 """
 
@@ -14,6 +22,9 @@ REFERENCE_ALBUMIN_G_DL = 3.8
 ALBUMIN_REFILL_SLOPE = .10   # fractional change in refill per g/dL of albumin
 HEART_FAILURE_CARDIAC_PRIOR = 1.5
 BETA_BLOCKER_CARDIAC_PRIOR = 1.3
+# Refill multiplier by beta-blocker: 63/70 = 0.9 for poorly dialysed drugs (Nadal 2021),
+# half that effect for drugs dialysis removes well. Unlisted beta-blockers use the larger effect.
+BETA_BLOCKER_REFILL = {'metoprolol': .95, 'atenolol': .95, 'carvedilol': .9}
 FAMILY_ORDER = ('volume', 'vascular', 'cardiac', 'mixed')
 
 GENETIC_NOTE = 'Not used: no genetic marker is proven to predict low blood pressure during dialysis.'
@@ -39,14 +50,23 @@ RECORDS = {
 }
 
 
+def beta_blocker_refill_factor(patient_id: str) -> float:
+    record = RECORDS.get(patient_id)
+    if not record:
+        return 1.
+    factors = [BETA_BLOCKER_REFILL.get(m['name'].lower(), .9) for m in record['medicines'] if m['beta_blocker']]
+    return min(factors) if factors else 1.
+
+
 def lab_refill_prior(patient_id: str) -> float:
-    """Population refill shifted by albumin. Unknown patients keep the population value."""
+    """Population refill shifted by albumin and beta-blockers. Unknown patients keep the population value."""
     record = RECORDS.get(patient_id)
     if not record:
         return POPULATION_REFILL_L_H
     albumin = record['labs']['albumin_g_dl']
     factor = 1 + ALBUMIN_REFILL_SLOPE * (albumin - REFERENCE_ALBUMIN_G_DL)
-    return round(POPULATION_REFILL_L_H * min(1.15, max(.8, factor)), 4)
+    factor = min(1.15, max(.8, factor)) * beta_blocker_refill_factor(patient_id)
+    return round(POPULATION_REFILL_L_H * factor, 4)
 
 
 def family_prior(patient_id: str) -> list[float]:
@@ -68,21 +88,26 @@ def record_summary(patient_id: str) -> dict | None:
     if not record:
         return None
     albumin = record['labs']['albumin_g_dl']
+    bb = beta_blocker_refill_factor(patient_id)
+    start = f'{lab_refill_prior(patient_id):.2f} L/h (average patient {POPULATION_REFILL_L_H:.2f})'
     effects = [{'field': 'Albumin', 'used': True, 'status': 'used',
-                'effect': f'Albumin {albumin} g/dL sets her starting refill speed to {lab_refill_prior(patient_id):.2f} L/h '
-                          f'(average patient {POPULATION_REFILL_L_H:.2f}). Past sessions then refine it.'}]
+                'effect': (f'Albumin {albumin} g/dL' + (' and her beta-blocker set' if bb < 1 else ' sets') +
+                           f' her starting refill speed to {start}. Past sessions then refine it. '
+                           'The albumin link is our assumption, and the evidence for it is weak.' +
+                           (' Beta-blockers slowed refill in a study (Nadal 2021).' if bb < 1 else ''))}]
     prior = family_prior(patient_id)
     reasons = [r for r, on in (('heart failure', record['heart_failure']),
                                ('a beta-blocker', any(m['beta_blocker'] for m in record['medicines']))) if on]
     effects.append({'field': 'Diagnoses and medicines', 'used': bool(reasons),
                     'status': 'used' if reasons else 'no_change',
                     'effect': (f'Because of {" and ".join(reasons)}, “heart not pumping harder” starts at '
-                               f'{prior[2] * 100:.0f}% instead of 25%.') if reasons else
+                               f'{prior[2] * 100:.0f}% instead of 25%. The size of this shift is our assumption.') if reasons else
                               'No heart failure or beta-blocker, so all four causes start equal.'})
     beta_blocker = any(m['beta_blocker'] for m in record['medicines'])
     effects.append({'field': 'Smartwatch heart rate', 'used': True, 'status': 'used',
-                    'effect': 'Her beta-blocker blunts the heart-rate rise, so the twin expects a smaller one.' if beta_blocker else
-                              'A rising heart rate means the body is fighting falling blood volume. The twin reads it every 5 minutes.'})
+                    'effect': ('Her beta-blocker blunts the heart-rate rise, so the twin expects a smaller one (size assumed). ' if beta_blocker else
+                               'A rising heart rate means the body is fighting falling blood volume. The twin reads it every 5 minutes. ') +
+                              'A sudden fall in heart rate is a known warning sign before a crash, so the twin never reads it as good news.'})
     effects.append({'field': 'Haemoglobin and sodium', 'used': False, 'status': 'not_used',
                     'effect': 'Recorded and shown. Not used by the model yet.'})
     effects.append({'field': 'Genetic markers', 'used': False, 'status': 'not_used', 'effect': GENETIC_NOTE})
