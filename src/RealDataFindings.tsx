@@ -1,3 +1,4 @@
+import { KeyPoint } from './KeyPoint';
 // Findings from real HEMOBP records and the v0.5 stress test, shared by Step 6, the Research page and the Evidence page.
 export type TwinReal = { status: string; test_patients: number; test_windows: number; mae_mm_hg: Record<string, number>;
   shrinkage?: { k: number; fit_patients: number }; event: { pr_auc: number } };
@@ -20,15 +21,16 @@ export function currentWarning(w: Warnings | undefined, fallback?: { sensitivity
 export function WarningsInContext({ data }: { data?: Warnings }) {
   if (data?.status !== 'evaluated') return null;
   const now = data.models[data.adopted], before = data.models['v0.4'];
-  const best = data.published_comparison.find(p => p.lift_over_chance);
   const fewer = before ? 1 - now.false_alarms / before.false_alarms : 0;
   return <div className="tradeoff warn-context">
-    <h4>Is that good? Compared with published work, yes.</h4>
+    <h4>How does this compare with other systems?</h4>
     <div className="warn-tiles">
-      <div><strong>{now.lift_over_chance.toFixed(1)}×</strong><span>more likely to be right than a random warning{best ? ` (best comparable study: ${best.lift_over_chance}×)` : ''}</span></div>
+      <div><strong>{now.lift_over_chance.toFixed(1)}×</strong><span>more likely to be right than a warning given at random</span></div>
       <div><strong>{pct(now.per_session.caught)}</strong><span>of sessions with a drop got a warning first</span></div>
-      <div><strong>1 per {Math.round(1 / now.alarms_per_session_hour)} h</strong><span>about one warning every {Math.round(1 / now.alarms_per_session_hour)} hours of dialysis</span></div>
+      <div><strong>1 per {Math.round(1 / now.alarms_per_session_hour)} h</strong><span>about one warning every {Math.round(1 / now.alarms_per_session_hour)} hours of dialysis, so nurses are not flooded</span></div>
     </div>
+    <KeyPoint>In the same range as published research systems, not better. The closest one (Zhang et al. 2023) caught 65% of drops and 22% of its warnings were right. It also used pulse and lab results, which our dataset does not have.</KeyPoint>
+    <p className="small-print">The two studies used different hospitals and different time windows, so their numbers cannot be compared exactly. Hospitals today mostly rely on a cuff reading every 30 minutes and machine alarms that sound once pressure is already low.</p>
     {data.adopted === 'v0.5' && fewer > 0 && <p className="small-print">Adding five facts the hospital already records (weight gained since last session, planned water removal, first blood pressure of the day, recent drops and years on dialysis) cut false alarms by {Math.round(fewer * 100)}%. The change was accepted on tuning patients before we looked at the test patients.</p>}
   </div>;
 }
@@ -55,8 +57,10 @@ export function TwinOnRealData({ data }: { data?: TwinReal }) {
     <p>Across {data.test_windows.toLocaleString()} moments from {data.test_patients} test patients, the twin missed by {twin.toFixed(1)} mmHg on average. Simply repeating the last reading missed by {last.toFixed(1)}.</p>
   </div>;
   return <div className="observed-caution">
-    <strong>The twin itself, run on real records: now level with the simple method.</strong>
-    <p>At first the twin expected drops that real patients often didn’t have, and missed by {raw.toFixed(1)} mmHg against {last.toFixed(1)} for repeating the last reading. We then taught it, on {data.shrinkage.fit_patients} training patients only, how much of its predicted change to trust. Now it misses by {twin.toFixed(1)}, level with the simple method. Its real value is explaining why pressure falls and testing “what if”, which a simple method can’t do.</p>
+    <strong>The twin on its own, on real patients: as good as the simplest guess, not better yet.</strong>
+    <p>The simplest guess is: “the next reading will be the same as the last one”. On real patients, that guess is off by about {last.toFixed(0)} points on average.</p>
+    <p>The twin was first off by {raw.toFixed(1)}, because it expected drops that often did not come. We added a correction that tells it how much to trust its own prediction, learned only from {data.shrinkage.fit_patients} training patients. Now it is off by {twin.toFixed(1)}, the same as the simplest guess.</p>
+    <p><b>What the twin adds is the reason:</b> the likely cause, and what would happen if the machine changed. The simplest guess cannot tell you either.</p>
   </div>;
 }
 
@@ -71,8 +75,9 @@ export function StressTestV05({ data }: { data?: PolicyV05 }) {
   return <div className="tradeoff">
     <h4>Re-run on {data.holdout_cases} new cases, with a more careful planner</h4>
     <p>The careful planner trusts the other sensors less, and re-checks blood pressure unless another check is clearly better. Its settings were chosen on separate practice cases first, then frozen.</p>
+    {by.fixed_cuff && by.robust && <KeyPoint>On new cases, the careful planner made {Math.round((1 - by.robust.mean_regret / by.fixed_cuff.mean_regret) * 100)}% smaller mistakes than just re-checking blood pressure. These are made-up cases, so this shows the logic works, not that it helps patients.</KeyPoint>}
     <div className="table-wrap"><table><thead><tr><th>Approach</th><th>Average mistake</th><th>Sure but wrong</th></tr></thead>
       <tbody>{['fixed_cuff', 'information_gain', 'decision_value', 'robust'].filter(p => by[p]).map(p => <tr key={p}><td>{policyNames[p]}</td><td>{by[p].mean_regret.toFixed(3)}</td><td>{by[p].confident_wrong_cases}</td></tr>)}</tbody></table></div>
-    {cuff && robust && dv && <p className="small-print">On these new cases every smart strategy made smaller mistakes than re-checking blood pressure, and the gap is larger than chance (careful planner {Math.round((1 - robust.mean_regret / cuff.mean_regret) * 100)}% smaller, 95% range {Math.round(-robust.seed_block_95_interval[1] / cuff.mean_regret * 100)}–{Math.round(-robust.seed_block_95_interval[0] / cuff.mean_regret * 100)}%). The careful planner was “sure but wrong” {Math.round((1 - robust.confident_wrong_cases / Math.max(1, dv.confident_wrong_cases)) * 100)}% less often than the plain one. These are made-up cases, so this shows the logic works, not that it helps patients.</p>}
+    {cuff && robust && dv && <p className="small-print">On these new cases every smart strategy made smaller mistakes than re-checking blood pressure, and the gap is larger than chance (careful planner {Math.round((1 - robust.mean_regret / cuff.mean_regret) * 100)}% smaller, 95% range {Math.round(-robust.seed_block_95_interval[1] / cuff.mean_regret * 100)}–{Math.round(-robust.seed_block_95_interval[0] / cuff.mean_regret * 100)}%). The careful planner was “sure but wrong” {Math.round((1 - robust.confident_wrong_cases / Math.max(1, dv.confident_wrong_cases)) * 100)}% less often than the plain one.</p>}
   </div>;
 }

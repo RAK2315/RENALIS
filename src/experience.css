@@ -149,3 +149,8 @@
 .compare-checks .tradeoff h4{display:none}
 .warn-tiles{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:10px;margin:8px 0 6px}.warn-tiles div{border:1px solid rgba(47,90,61,.16);border-radius:10px;padding:10px 12px;background:rgba(212,237,170,.18)}.warn-tiles strong{display:block;font-size:22px;line-height:1.1}.warn-tiles span{display:block;font-size:12.5px;color:#4f6542;margin-top:4px}
 @media (max-width:720px){.warn-tiles{grid-template-columns:1fr}}
+.key-point{margin:14px 0;padding:12px 16px;border-radius:10px;background:#eef6dc;border-left:5px solid #2c7858}
+.key-point .kp-label{display:block;font-size:11px;letter-spacing:.12em;text-transform:uppercase;font-weight:700;color:#2c7858;margin-bottom:3px}
+.key-point p{margin:0;font-size:16px;line-height:1.45;font-weight:600;color:#133b2e}
+.key-point.limit{background:#fbf1e8;border-left-color:#b4774c}.key-point.limit .kp-label{color:#9a5d1c}
+.observed-caution p+p{margin-top:8px}

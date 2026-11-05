@@ -316,7 +316,7 @@ Copy these into the slides as images. They are in `ppt/deck-screens/`:
 ```
 +-------------------------------+  +-------------------------------+
 | WARNINGS ON REAL DATA         |  | IN CONTEXT                    |
-|  [dots.jpg]                   |  |  [tile] 5.8x vs 5.4x          |
+|  [dots.jpg]                   |  |  [tile] 5.8x better than chance|
 |  60 of 100 drops warned       |  |  [tile] 76% sessions          |
 |                               |  |  [tile] 1 per 7 hours         |
 +-------------------------------+  +-------------------------------+
@@ -331,13 +331,13 @@ Copy these into the slides as images. They are in `ppt/deck-screens/`:
 1. **Panel "WARNINGS ON REAL DATA"**: `x 48, y 186, w 900, h 420`, 2.5 px Green border. Image slot `dots.jpg` inside (`w 840, h 270`). Under it, 20 px:
    "**60 of every 100 real drops** were warned in time. **15 of every 100 warnings** were right. Drops are rare, so most warnings are still false alarms, and we show that openly."
 2. **Panel "IN CONTEXT"**: `x 972, y 186, w 900, h 420`, 2.5 px Green border, three stacked tiles (Lime tint fill, each h 112):
-   - "5.8×" (Forest, 52 px) · "A RENALIS warning is 5.8 times more likely to be right than a random one. The best comparable published system: 5.4 times (Zhang et al. 2023)."
+   - "5.8×" (Forest, 52 px) · "A RENALIS warning is 5.8 times more likely to be right than a warning given at random. In the same range as published research systems, without pulse or lab data."
    - "76%" (Forest) · "of real sessions with a drop got a warning first."
    - "1 per 7 h" (Forest) · "about one warning every 7 hours of dialysis, so it does not flood the nurse."
 3. **Panel "WHAT WE IMPROVED THIS WEEK"**: `x 48, y 630, w 1824, h 210`, 2.5 px Sage border. Three items side by side:
    - ICON 6.1 · lead: "13% fewer false alarms" · text: "Five facts hospitals already record, like weight gained since the last session, sharpened the warning."
      - Icon prompt: "a bell with a small downward arrow and a green tick"
-   - ICON 6.2 · lead: "The twin now matches the simple method" · text: "Corrected using training patients only, its forecast on real records is level with repeating the last reading, and it can also explain why."
+   - ICON 6.2 · lead: "The twin now holds its own on real patients" · text: "With a correction learned only from training patients, it predicts the next reading as well as the simplest guess, and it also gives the reason."
      - Icon prompt: "two lines on a chart meeting and running together, one green, one grey"
    - ICON 6.3 · lead: "Smarter checks now win" · text: "On 384 new test cases, a more careful planner made 9% smaller mistakes than just re-checking blood pressure."
      - Icon prompt: "a checklist with a small brain symbol and an upward arrow"
@@ -348,7 +348,7 @@ Copy these into the slides as images. They are in `ppt/deck-screens/`:
    - Icon prompts: 6.4 "a green check mark badge", 6.5 "a hospital folder with a magnifying glass", 6.6 "a stethoscope with a small calendar"
 
 **Speaker notes (about 45 seconds):**
-"We tested on real dialysis records from a public dataset, on 176 patients the model had never seen. It warned in time for 60 percent of real drops. 15 percent of its warnings were right. That sounds low, but drops are rare. A RENALIS warning is 5.8 times more likely to be right than chance, slightly better than the best comparable published system. This week we cut false alarms by 13 percent, brought the twin level with the simple method on real records, and a more careful planner now beats plain re-checking on new test cases. What we still need to prove is benefit in real care, which needs a hospital study."
+"We tested on real dialysis records from a public dataset, on 176 patients the model had never seen. It warned in time for 60 percent of real drops, and 15 percent of its warnings were right. That sounds low, but drops are rare. A RENALIS warning is 5.8 times more likely to be right than one given at random, which is in the same range as published research systems, and we got there without pulse or lab data. This week we cut false alarms by 13 percent, the twin now predicts as well as the simplest guess on real patients, and a more careful planner beats plain re-checking on new test cases. What we still need to prove is benefit in real care, which needs a hospital study."
 
 ---
 
@@ -465,8 +465,8 @@ Copy these into the slides as images. They are in `ppt/deck-screens/`:
 - A fall below 90 most strongly linked with death: Flythe et al. 2015, JASN, doi 10.1681/ASN.2014020222.
 - Blood pressure every 30 minutes: Lin et al. 2019 (HEMOBP data description).
 - 60%, 15%, 5.8×, 76%, 1 per 7 h, 13% fewer false alarms: `docs/warnings-v05.json`.
-- 5.4× comparison: Zhang et al. 2023, Nephrology Dialysis Transplantation, doi 10.1093/ndt/gfad070.
-- Twin level with the simple method: `docs/twin-hemobp.json` (12.2 vs 12.2 average miss).
+- "Same range as published research": Zhang et al. 2023, Nephrology Dialysis Transplantation, doi 10.1093/ndt/gfad070 (65% caught, 22% of warnings right, with pulse and lab data; different hospital and time window, so not directly comparable).
+- Twin as good as the simplest guess: `docs/twin-hemobp.json` (12.2 vs 12.2 average miss).
 - 9% smaller mistakes on 384 new cases: `docs/policy-validation-v05.json`.
 - 82%, 28 min, 82% → 0%, 50% → 8%: the live demo, patient Meera (RNL-014), minute 70 and 90.
 - 59 automatic tests: `tests/` folder.

@@ -96,11 +96,11 @@ We ran three tests. None of them shows yet that RENALIS helps real patients, but
 | **Live data + past sessions** | **11.2** |
 
 - **Warnings before a drop to 90 or below** (v0.5): it **caught 60% of drops** and **15% of warnings were right**. Drops are rare (about 2.6 in every 100 moments), so most warnings are still false alarms. In context:
-  - A RENALIS warning is **5.8 times** more likely to be right than a random one. The closest published system ([Zhang et al. 2023, NDT](https://doi.org/10.1093/ndt/gfad070)) reaches 5.4 times on the same kind of scoring.
+  - A RENALIS warning is **5.8 times** more likely to be right than one given at random. That is in the same range as published research systems, not better: the closest one ([Zhang et al. 2023, NDT](https://doi.org/10.1093/ndt/gfad070)) caught 65% of drops with 22% of warnings right, using pulse and lab results our dataset lacks. Different hospitals and time windows mean the numbers are not directly comparable.
   - 76% of sessions with a drop got a warning first, at about one warning every 7 hours of dialysis.
   - Five facts the hospital already records (weight gained since last session, planned water removal, first reading of the day, recent drops, years on dialysis) cut false alarms by 13%. The change was accepted on tuning patients before looking at test patients.
   - Stricter rules cut more false alarms but miss more drops. There is no free fix with this data.
-- **The twin itself on real data: now level with the simple method.** Uncorrected, it missed by 12.8 mmHg against 12.2 for repeating the last reading, because it expected drops that real patients often don't have. A two-number correction learned on training patients only brings it to 12.2, level with the simple method. Its value is explaining *why* pressure falls and testing "what if". HEMOBP has no heart rate or blood tests, so those inputs remain untested on real data.
+- **The twin on its own, on real patients: as good as the simplest guess, not better yet.** The simplest guess is "the next reading equals the last one", which is off by 12.2 mmHg on average. The twin was first off by 12.8, because it expected drops that often did not come. A correction learned only from training patients, telling it how much to trust its own prediction, brings it to 12.2. Its value is explaining *why* pressure falls and testing "what if". HEMOBP has no heart rate or blood tests, so those inputs remain untested on real data.
 
 ![Of every 100 real drops, 61 were warned in time; of every 100 warnings, 14 were real](public/readme/dots.webp)
 
