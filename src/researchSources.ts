@@ -15,6 +15,16 @@ export type ResearchSource = {
 // These sources motivate the research; none validates RENALIS itself.
 export const researchSources: ResearchSource[] = [
   {
+    id: 'gbd-ckd-2023',
+    title: 'Global, regional, and national burden of chronic kidney disease in adults, 1990–2023 (GBD 2023)',
+    year: 2025,
+    url: 'https://doi.org/10.1016/S0140-6736(25)01853-7',
+    category: 'context',
+    finding: 'India had about 138 million adults with chronic kidney disease in 2023, the second-highest number in the world after China.',
+    relevance: 'Shows the scale of kidney disease in India, the population RENALIS is meant for.',
+    limitation: 'Modelled estimates across all stages of kidney disease; most people are not on dialysis. It says nothing about RENALIS.',
+  },
+  {
     id: 'india-centres-2024',
     title: 'Centre-level variation in the survival of patients receiving haemodialysis in India',
     year: 2024,
