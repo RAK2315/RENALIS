@@ -38,7 +38,7 @@ function SmallTrace({ stable }: { stable: boolean }) {
 export default function App({initialPage='cockpit',initialPatient='RNL-014',initialMinute=90,startTour=false,initialTourStep=0,onHome,onResearch}:{initialPage?:WorkspacePage;initialPatient?:string;initialMinute?:number;startTour?:boolean;initialTourStep?:number;onHome:()=>void;onResearch:()=>void}) {
   const [page, setPage] = useState<Page>(startTour?tourSteps[initialTourStep].page:initialPage);
   const [patientId, setPatientId] = useState(startTour?'RNL-014':initialPatient);
-  const [cutoff, setCutoff] = useState(startTour?90:initialMinute);
+  const [cutoff, setCutoff] = useState(startTour?tourSteps[initialTourStep].minute:initialMinute);
   const [tourOpen,setTourOpen]=useState(startTour);
   const [tourStep,setTourStep]=useState(initialTourStep);
   const [patients, setPatients] = useState<PatientSummary[]>([]);
@@ -63,7 +63,7 @@ export default function App({initialPage='cockpit',initialPatient='RNL-014',init
   const dialog = useRef<HTMLDialogElement>(null);
 
   useEffect(()=>{const params=new URLSearchParams({view:page,patient:patientId,minute:String(cutoff)});if(tourOpen){params.set('tour','1');params.set('step',String(tourStep));}window.history.replaceState(null,'',`/workspace?${params}`);},[page,patientId,cutoff,tourOpen,tourStep]);
-  function goTour(step:number){setPlaying(false);setPatientId('RNL-014');setCutoff(80);setPage(tourSteps[step].page);setTourStep(step);setTourOpen(true);}
+  function goTour(step:number){setPlaying(false);setPatientId('RNL-014');setCutoff(tourSteps[step].minute);setPage(tourSteps[step].page);setTourStep(step);setTourOpen(true);}
   function showTourArea(){(document.querySelector(tourSteps[tourStep].selector)??document.querySelector('.page-heading'))?.scrollIntoView({behavior:window.matchMedia('(prefers-reduced-motion: reduce)').matches?'instant':'smooth',block:'center'});}
 
   useEffect(() => {

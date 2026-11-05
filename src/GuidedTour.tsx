@@ -2,38 +2,49 @@ import { useEffect, useRef, useState } from 'react';
 import { ArrowLeft, ArrowRight, Check, Compass, X } from 'lucide-react';
 import type { WorkspacePage } from './Experience';
 
-type TourStep={page:WorkspacePage;title:string;seeing:string;meaning:string;tryThis:string;selector:string};
+type TourStep={page:WorkspacePage;minute:number;title:string;seeing:string;meaning:string;tryThis:string;selector:string};
 
+// The tour follows one kidney doctor through one alert, from the warning to the written decision.
 export const tourSteps:TourStep[]=[
-  {page:'investigation',selector:'#journey-memory',
-    title:'Learning from the past',
-    seeing:'Meera is partway through a four-hour dialysis session. Before predicting anything, the twin reads her health record and earlier sessions.',
-    meaning:'Three numbers for how fast her body moves water back into the blood. Left: an average patient. Middle: adjusted for her low albumin blood test. Right: refined from her past sessions. A personal number makes the forecast fit her rather than an average person.',
-    tryThis:'Open “See the past sessions it learned from” to see each earlier session and how low her blood pressure went.'},
-  {page:'investigation',selector:'#journey-physiology',
-    title:'What is happening inside her body',
-    seeing:'Two water tanks. The left tank is water stored in her tissues. The middle tank is water in her blood. The machine on the right drains the blood tank.',
-    meaning:'The body refills the blood from the tissues (green pipe), while the machine drains it (red pipe). If the drain is faster than the refill, the blood tank empties and blood pressure falls. The coloured line under the picture tells you which is winning. The numbers are the model’s estimates, not scans.',
-    tryThis:'Compare the two pipe speeds. Then tap a label under the picture, such as “Heart pumping”, to read what it means.'},
-  {page:'investigation',selector:'#journey-compare',
-    title:'Four possible causes',
-    seeing:'Four cards, one for each reason her blood pressure could fall.',
-    meaning:'All four explain her readings so far, but they predict different futures. The percentage shows how well each one fits. A high percentage means “fits best so far”, not “this is the diagnosis”.',
-    tryThis:'Drag the “what if” water removal speed slider and watch each cause predict a different blood pressure 30 minutes from now.'},
-  {page:'investigation',selector:'#journey-measure',
-    title:'Which check would settle it?',
-    seeing:'At the top, one coloured bar split between the four causes. Below it, the check the twin suggests, with the result each cause expects.',
-    meaning:'The twin picks the check whose result would best tell the leading causes apart. If the causes expect very different results, the check is useful. When a reading arrives, the bar shifts towards the cause that expected it.',
-    tryThis:'Press “Take this measurement”, then scroll back up to the coloured bar and watch it shift.'},
-  {page:'investigation',selector:'#journey-audit',
-    title:'Nothing gets erased',
-    seeing:'A log of every reading taken, including the failed ones.',
-    meaning:'Each reading shows how it moved the percentages, for example 40% → 70%. Corrections are added on top and the original is never deleted, so a doctor could check the twin’s reasoning later.',
-    tryThis:'Look at the before → after numbers on the reading you just took. You can also add a review note.'},
-  {page:'investigation',selector:'#journey-verify',
-    title:'How well does it actually work?',
-    seeing:'Results from two separate tests: real hospital data, and a 192-case stress test.',
-    meaning:'On real data it predicts the next blood pressure reading reasonably well, but raises too many false alarms. In the stress test, picking the smartest check did not beat simply re-checking blood pressure. We show that openly.',
+  {page:'cockpit',minute:70,selector:'.forecast-alert',
+    title:'1. An alert comes in',
+    seeing:'You are the kidney doctor on shift, looking after several dialysis chairs. Seventy minutes into Meera’s session, her twin raises an alert: a drop is likely soon.',
+    meaning:'Her latest blood pressure, 111, still looks normal. But in 82 of every 100 simulated futures, it falls below 90 within the next 30 minutes. The twin gives you about half an hour to act, instead of finding out after she feels faint.',
+    tryThis:'Drag the Session time slider back to minute 50, where the risk is 0%, then forward to 70 again to watch the alert appear.'},
+  {page:'cockpit',minute:70,selector:'.health-record',
+    title:'2. Check who she is',
+    seeing:'Before deciding anything, you look at her record: blood tests, diagnoses, medicines, and her heart rate from a smartwatch.',
+    meaning:'Her albumin is low, so the twin expects her body to refill the blood more slowly than average. Her heart rate is rising, which means her body is working to hold the pressure up. The twin shows which parts of the record change the forecast, and which it does not use.',
+    tryThis:'Open “How her record changes the forecast” to see what each field does.'},
+  {page:'cockpit',minute:70,selector:'.scenario-panel',
+    title:'3. Try a gentler setting, safely',
+    seeing:'The machine is removing 1,150 millilitres of water an hour. You wonder what would happen if it went slower.',
+    meaning:'The twin runs the same 192 copies of Meera forward with the new setting. It shows the new risk and the cost: how much more water would stay in her body for later. Nothing here changes a real machine.',
+    tryThis:'Drag Water removal speed down to 1,000. The risk falls from 82% to almost zero, for about 75 millilitres more water left for later. Press “Save this scenario” to keep it for your note.'},
+  {page:'investigation',minute:70,selector:'#journey-physiology',
+    title:'4. Ask why her pressure is falling',
+    seeing:'You open the step-by-step story to see the reason. The two water tanks show where her water is right now.',
+    meaning:'The machine takes water out of her blood faster than her body can refill it from the tissues. So the blood tank slowly empties, and that is what makes her pressure fall. Step 1, just above, shows why: she refills more slowly than an average patient.',
+    tryThis:'Compare the green refill speed with the red removal speed. Then tap a label under the picture, such as “Heart pumping”, to read what it means.'},
+  {page:'investigation',minute:70,selector:'#journey-compare',
+    title:'5. Four possible reasons',
+    seeing:'The twin does not give you a single answer. It shows four reasons that could explain the same falling readings.',
+    meaning:'Not enough blood volume, blood vessels not tightening, the heart not pumping harder, or a mix. Right now all four fit equally well, but they predict different futures and call for different responses. Guessing is not good enough.',
+    tryThis:'Look at “BP in 30 min” on each card. Then drag the “what if” slider and see how each reason predicts something different.'},
+  {page:'investigation',minute:70,selector:'#journey-measure',
+    title:'6. Order the one check that settles it',
+    seeing:'The twin suggests one extra test, and shows the result each reason would expect from it.',
+    meaning:'A test is useful when the reasons expect very different results, because then the real result clearly points one way. The twin also shows what the test is worth: how much it lowers the chance of backing the wrong reason.',
+    tryThis:'Press “Take this measurement”. The simulated device returns a value. Scroll up to the coloured bar: the reasons that predicted it grow, and the others shrink.'},
+  {page:'investigation',minute:70,selector:'#journey-audit',
+    title:'7. Write your decision',
+    seeing:'Everything you saw is in the log: each reading, how it moved the four reasons, and any correction.',
+    meaning:'You make the decision, not the twin. Your note is stored next to the evidence, and nothing is ever deleted, so a colleague can see later exactly what you saw and why you acted.',
+    tryThis:'Type a short note, for example “Slowed removal to 1,000 at minute 70; heart-pumping test ordered”, and press Save note. You can also download the record in the standard hospital format (FHIR).'},
+  {page:'investigation',minute:70,selector:'#journey-verify',
+    title:'8. How far to trust it',
+    seeing:'As a doctor, you will ask how well this works on real patients. Step 6 answers that.',
+    meaning:'On real records from 176 patients it had never seen, it warned in time for 60% of drops, and 15% of its warnings were right. That is in the same range as published research systems. It is a research prototype, not ready for patients yet.',
     tryThis:'Look at the two dot grids. Left: of 100 real drops, how many it warned about. Right: of 100 warnings, how many were real.'},
 ];
 
@@ -77,7 +88,7 @@ export default function GuidedTour({step,onStep,onClose,onShow}:{step:number;onS
 
   return <section className={`guided-tour ${box?'strip':''}`} style={box?{left:box.left,width:box.width}:undefined} aria-label="Guided walkthrough" role="dialog" aria-live="polite">
     <div className="tour-heading">
-      <span><Compass size={16}/>Guided demo · step {step+1} of {tourSteps.length}</span>
+      <span><Compass size={16}/>A doctor’s view · step {step+1} of {tourSteps.length}</span>
       <div className="tour-actions">
         <button className="text-button" disabled={step===0} onClick={()=>onStep(step-1)}><ArrowLeft size={14}/>Back</button>
         <button className="button light" disabled={!targetReady} onClick={onShow}>{targetReady?'Scroll to it':'Loading…'}</button>
@@ -90,8 +101,8 @@ export default function GuidedTour({step,onStep,onClose,onShow}:{step:number;onS
     </div>
     <div className="tour-body">
       <div className="tour-intro"><h2>{title}</h2><p>{seeing}</p></div>
-      <div className="tour-meaning"><span>What it means</span><p>{meaning}</p></div>
-      <div className="tour-observe"><span>Try this</span><p>{tryThis}</p></div>
+      <div className="tour-meaning"><span>What it tells you</span><p>{meaning}</p></div>
+      <div className="tour-observe"><span>Your move</span><p>{tryThis}</p></div>
     </div>
   </section>;
 }
