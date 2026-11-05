@@ -6,7 +6,11 @@ COPY requirements-lock.txt .
 RUN pip install --no-cache-dir -r requirements-lock.txt
 
 COPY backend/ ./backend/
-RUN mkdir -p data && chown -R 1000:1000 /app
+COPY docs/ ./docs/
+COPY output/ ./output/
+COPY public/ ./public/
+COPY data/ ./data/
+RUN chown -R 1000:1000 /app
 
 USER 1000
 ENV HOME=/app
