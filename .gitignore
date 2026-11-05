@@ -24,3 +24,7 @@ artifacts/launch45/
 archive/
 .vercel
 .env*
+
+# Private speaker notes for the jury round
+ppt/*.pdf
+ppt/demo-shots/
