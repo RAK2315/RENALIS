@@ -44,7 +44,10 @@ class SequentialDiscriminationTests(unittest.TestCase):
         self.assertEqual(second['record']['value'], 85.)
         after = self.investigate()
         self.assertTrue(after['comparison_unresolved'])
-        self.assertGreater(after['families'][0]['weight'], .65)
+        # Volume leads after the blood volume reading. Lower than before the lab-adjusted
+        # refill prior (0.61 vs 0.66), but the same ordering and unresolved state.
+        self.assertGreater(after['families'][0]['weight'], .58)
+        self.assertGreater(after['families'][0]['weight'], after['families'][2]['weight'])
         self.assertGreater(after['families'][2]['weight'], .30)
         self.assertEqual(after['discrimination_plan']['latest_evidence']['value'], 85.)
         self.assertNotEqual(after['discrimination_plan']['recommended']['offset_minutes'], 0)

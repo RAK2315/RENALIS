@@ -5,7 +5,7 @@ import json
 import numpy as np
 
 
-def learn(records, cutoff=0):
+def learn(records, cutoff=0, population=.88):
     from .model import advance, pressure
     eligible=[s for s in records if s['available_minute']<cutoff and s['quality']=='valid']
     grid=np.linspace(.35,1.45,45)
@@ -34,14 +34,15 @@ def learn(records, cutoff=0):
             'refill_sd':float(np.sqrt(likelihood@(refills-mean)**2)),
             'min_sbp':min(r['sbp'] for r in readings),'readings_count':len(readings)})
     # Shrink to the declared population reference; limited data never implies certainty.
-    n=len(estimates);population=.88
+    # The shrinkage target is the lab-adjusted population value when a health record exists.
+    n=len(estimates)
     mean=(2*population+sum(s['refill_estimate_l_h'] for s in estimates))/(2+n)
     sd=max(.055,float(np.std([s['refill_estimate_l_h'] for s in estimates])) if n else .24,
            float(np.mean([s['refill_sd'] for s in estimates])) if n else .24)
     digest=hashlib.sha256(json.dumps(eligible,sort_keys=True).encode()).hexdigest()[:16]
     return {'refill_l_h':round(mean,4),'refill_sd':round(sd,4),'population_refill_l_h':population,
         'sessions_used':n,'history_digest':digest,'sessions':estimates,
-        'method':'Grid likelihood on preceding measured synthetic BP trajectories, shrunk toward a population reference',
+        'method':'Grid likelihood on preceding measured synthetic BP trajectories, shrunk toward a lab-adjusted population reference',
         'limitations':['Synthetic fixtures share a physiology family; not observed clinical personalization.',
             'Refill is conditional on the declared pressure equation; latent physiology need not be identifiable.',
             'Only completed records available before the cutoff enter learning.']}
@@ -50,7 +51,11 @@ def learn(records, cutoff=0):
 @lru_cache(maxsize=8)
 def patient_history(patient_id):
     from .history_fixtures import completed_sessions
-    return learn(completed_sessions(patient_id))
+    from .ehr import POPULATION_REFILL_L_H, RECORDS, lab_refill_prior
+    memory = learn(completed_sessions(patient_id), population=lab_refill_prior(patient_id))
+    record = RECORDS.get(patient_id)
+    return {**memory, 'average_refill_l_h': POPULATION_REFILL_L_H,
+            'albumin_g_dl': record['labs']['albumin_g_dl'] if record else None}
 
 
 def ablation(patient_id):

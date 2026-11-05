@@ -68,6 +68,30 @@ def pressure(plasma, reference, baseline, compensation):
     return baseline * ratio ** 2.65 + compensation * np.maximum(0, 1 - ratio)
 
 
+RESTING_HR = 72
+WATCH_NOISE_BPM = 2.5
+
+
+def hr_gain(patient_id: str) -> float:
+    """Beta-blockers blunt the heart-rate rise. Known from the health record."""
+    from .ehr import RECORDS
+    record = RECORDS.get(patient_id)
+    return .4 if record and any(m['beta_blocker'] for m in record['medicines']) else 1.
+
+
+def expected_hr(plasma, reference, compensation, gain):
+    """Heart rate rises as blood volume falls, more in patients who compensate strongly."""
+    return RESTING_HR + gain * (compensation / 12) * np.maximum(0, 1 - plasma / reference) * 100
+
+
+def watch_hr(p: Patient, plasma: float, minute: int, rng) -> int | None:
+    """Synthetic smartwatch reading, once a minute. A loose strap gives short gaps."""
+    value = expected_hr(plasma, p.initial_plasma, p.compensation, hr_gain(p.id)) + rng.normal(0, WATCH_NOISE_BPM)
+    if (p.seed + minute) % 47 in (0, 1, 2):
+        return None
+    return int(round(float(value)))
+
+
 @lru_cache(maxsize=8)
 def observations(patient_id: str) -> tuple[dict, ...]:
     """Generate a deterministic future session; callers must slice by cutoff."""
@@ -88,10 +112,11 @@ def observations(patient_id: str) -> tuple[dict, ...]:
             quality = "artifact"
         rows.append({"minute": minute, "sbp": reading, "quality": quality,
                      "uf_ml_h": machine_rate(p, minute),
-                     "hr": round(72 + .3 * (p.baseline_sbp - sbp) + rng.normal(0, 1.2)),
+                     "hr": watch_hr(p, plasma, minute, rng),
                      "dialysate_c": 36.5, "blood_flow_ml_min": 280,
                      "removed_ml": round(removed * 1000),
-                     "source": "synthetic medical-device replay"})
+                     "source": "synthetic medical-device replay",
+                     "hr_source": "synthetic smartwatch"})
         plasma, tissue, removed = advance(plasma, tissue, removed, p.refill_true,
                                          p.initial_plasma, p.target_ml / 1000,
                                          machine_rate(p, minute))
@@ -103,7 +128,7 @@ def historical_sessions(p: Patient) -> list[dict]:
     return patient_history(p.id)['sessions']
 
 
-def _filter(p: Patient, cutoff: int, dynamic: bool = True, history: bool = True):
+def _filter(p: Patient, cutoff: int, dynamic: bool = True, history: bool = True, wearable: bool = True):
     rng = np.random.default_rng(p.seed + 1000)
     n = N_PARTICLES
     # Static ablation uses a population prior. Patient history determines the fused prior.
@@ -118,6 +143,7 @@ def _filter(p: Patient, cutoff: int, dynamic: bool = True, history: bool = True)
     plasma, tissue, removed = reference.copy(), reference_tissue.copy(), np.zeros(n)
     weights = np.ones(n) / n
     log = []
+    gain = hr_gain(p.id)
     known = observations(p.id)[:cutoff + 1]
     for row in known:
         minute = row["minute"]
@@ -131,6 +157,12 @@ def _filter(p: Patient, cutoff: int, dynamic: bool = True, history: bool = True)
             likelihood = np.exp(-.5 * ((expected - row["sbp"]) / 3.5) ** 2) + 1e-12
             weights *= likelihood
             weights /= weights.sum()
+        if dynamic and wearable and minute % 5 == 2 and row.get("hr") is not None:
+            # Smartwatch heart rate: tells how hard the body is fighting a falling blood volume.
+            hr_expected = expected_hr(plasma, reference, compensation, gain)
+            weights *= np.exp(-.5 * ((hr_expected - row["hr"]) / 5.) ** 2) + 1e-12
+            weights /= weights.sum()
+        if dynamic and (row["sbp"] is not None or minute % 5 == 2):
             if 1 / np.sum(weights ** 2) < n * .55:
                 indices = rng.choice(n, size=n, p=weights)
                 plasma, tissue, removed = plasma[indices], tissue[indices], removed[indices]
@@ -201,6 +233,7 @@ def snapshot(patient_id: str, cutoff: int):
                        "Most posterior simulations remain above the threshold."}
     return {"patient": {**asdict(p), "refill_true": None, "seed": None,
                         "condition": "End-stage chronic kidney disease",
+                        "record": __import__('backend.ehr',fromlist=['record_summary']).record_summary(p.id),
                         "provenance": "fictional patient / synthetic EHR"},
             "cutoff": cutoff, "duration": DURATION, "horizon": min(HORIZON, DURATION - cutoff),
             "history": [{**r, "estimated_sbp": state["log"][r["minute"]]["estimated_sbp"]} for r in known],
@@ -273,13 +306,16 @@ def evaluation():
             dynamic = _forecast(dynamic_state, cutoff, s["current_machine"]["uf_ml_h"])["trajectory"][index]["sbp"]
             static_state = _filter(p, cutoff, dynamic=False)
             static = _forecast(static_state, cutoff, s["current_machine"]["uf_ml_h"])["trajectory"][index]["sbp"]
+            no_watch_state = _filter(p, cutoff, wearable=False)
+            no_watch = _forecast(no_watch_state, cutoff, s["current_machine"]["uf_ml_h"])["trajectory"][index]["sbp"]
             rows.append({"patient_id": pid, "cutoff": cutoff, "actual": future["sbp"],
-                         "fused": fused, "dynamic": dynamic, "static": static,
+                         "fused": fused, "dynamic": dynamic, "static": static, "no_watch": no_watch,
                          "persistence": s["latest"]["sbp"], "event": outcome["event"],
                          "alert": s["alert"]["status"] == "review"})
     models = []
     for key, label in (("persistence", "Last BP"), ("static", "History + machine"),
-                       ("dynamic", "Population prior + observations"), ("fused", "Personalized fused twin")):
+                       ("dynamic", "Population prior + observations"), ("no_watch", "Fused twin without smartwatch"),
+                       ("fused", "Personalized fused twin")):
         errors = [abs(r[key] - r["actual"]) for r in rows]
         models.append({"key": key, "label": label, "mae_mm_hg": round(float(np.mean(errors)), 2) if errors else None})
     tp = sum(r["alert"] and r["event"] for r in rows)

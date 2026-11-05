@@ -103,6 +103,9 @@ def infer(history: tuple, prior: dict) -> Cloud:
     predicted = prior['baseline_sbp'] * np.exp(geometric + intercept + x[:, None] * slope)
     errors = np.sqrt(np.mean((predicted - observed[:, None]) ** 2, axis=0))
     logw = -.5 * errors ** 2 / 6.0 ** 2 - np.log(count)
+    # Health-record prior (heart failure, beta-blocker). Uniform when no record is given.
+    family_prior = np.asarray(prior.get('family_prior') or [.25] * len(FAMILIES))
+    logw = logw + np.log(family_prior[family] * len(FAMILIES))
     # Anchor all hypotheses to the latest available pressure with observation noise.
     anchor = valid[-1]['sbp'] + rng.normal(0, 1.3, count)
     drift = slope + rng.normal(0, .018, count)
@@ -122,9 +125,11 @@ def base_cloud(patient_id: str, cutoff: int):
     known = observations(patient_id)[:cutoff + 1]
     from .history import patient_history
     memory=patient_history(patient_id)
+    from .ehr import family_prior
     return infer(known, {'initial_plasma': p.initial_plasma, 'target_l': p.target_ml / 1000,
                          'refill_l_h': memory['refill_l_h'], 'baseline_sbp': p.baseline_sbp,
-                         'history_digest':memory['history_digest'],'sessions_used':memory['sessions_used']})
+                         'history_digest':memory['history_digest'],'sessions_used':memory['sessions_used'],
+                         'family_prior':family_prior(patient_id)})
 
 
 def project(cloud: Cloud, rate: int, profile='constant', horizon=None, delay_minutes=0):
