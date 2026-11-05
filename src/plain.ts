@@ -35,3 +35,6 @@ export const channelExplain: Record<string, string> = {
 };
 
 export const plainLabel = (id: string, fallback: string) => familyName[id] ?? channelName[id] ?? fallback;
+
+// Plain names for the real-data comparison models.
+export const modelName: Record<string, string> = { 'Last observed BP': 'Just repeat the last reading', 'Dynamic only': 'Live session data', 'Demographics + dynamic': 'Live data + age and sex', 'Preceding sessions + dynamic': 'Live data + past sessions' };

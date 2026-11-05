@@ -64,26 +64,26 @@ def demo_example():
 
 
 PROJECT_DOCUMENTS={
-    'architecture-pdf':('Architecture with adaptive evidence planning','output/pdf/RENALIS_Architecture_v06.pdf','PDF','application/pdf'),
-    'architecture-pptx':('Editable submission architecture','output/presentations/RENALIS_Architecture_v06_Professional_Final.pptx','PPTX','application/vnd.openxmlformats-officedocument.presentationml.presentation'),
-    'presentation-pdf':('Submission presentation and actual outcomes','output/pdf/RENALIS_Project_Presentation_v06.pdf','PDF','application/pdf'),
-    'presentation-pptx':('Editable submission presentation','output/presentations/RENALIS_Project_Presentation_v06_Design_Final.pptx','PPTX','application/vnd.openxmlformats-officedocument.presentationml.presentation'),
+    'architecture-pdf':('Architecture diagram','output/pdf/RENALIS_Architecture_v06.pdf','PDF','application/pdf'),
+    'architecture-pptx':('Architecture diagram (editable)','output/presentations/RENALIS_Architecture_v06_Professional_Final.pptx','PPTX','application/vnd.openxmlformats-officedocument.presentationml.presentation'),
+    'presentation-pdf':('Project presentation','output/pdf/RENALIS_Project_Presentation_v06.pdf','PDF','application/pdf'),
+    'presentation-pptx':('Project presentation (editable)','output/presentations/RENALIS_Project_Presentation_v06_Design_Final.pptx','PPTX','application/vnd.openxmlformats-officedocument.presentationml.presentation'),
     'implementation-decisions':('Implementation decisions and reasons','docs/implementation-decisions-v04.md','Markdown','text/markdown'),
     'submission-checklist':('Submission and release checklist','docs/submission-checklist.md','Markdown','text/markdown'),
     'master-report':('Research, decisions and master plan','output/pdf/RENALIS_Research_Strategy_and_Master_Plan.pdf','PDF','application/pdf'),
     'release-plan':('Release 0.4 implementation and evidence ledger','docs/release-v04.md','Markdown','text/markdown'),
-    'clinical-protocol':('Proposed clinical and human-factors protocol','docs/clinical-study-protocol.md','Markdown','text/markdown'),
-    'observed-v04':('Audited observed-data evaluation 0.4','docs/observed-v04.json','JSON','application/json'),
-    'policy-v04':('Independent policy validation 0.4','docs/policy-validation-v04.json','JSON','application/json'),
+    'clinical-protocol':('Proposed study with doctors','docs/clinical-study-protocol.md','Markdown','text/markdown'),
+    'observed-v04':('Real-data test results','docs/observed-v04.json','JSON','application/json'),
+    'policy-v04':('Stress test results (192 cases)','docs/policy-validation-v04.json','JSON','application/json'),
     'project-guide':('RENALIS project guide','docs/project-guide.md','Markdown','text/markdown'),
     'research-review':('Evidence review and validation protocol','docs/research-review-2026-10.md','Markdown','text/markdown'),
     'execution-plan':('Requirements, execution plan, and 20-minute storyboard','docs/execution-and-validation-plan.md','Markdown','text/markdown'),
     'walkthrough':('Click-by-click demonstration walkthrough 0.4','docs/demo-walkthrough-v04.md','Markdown','text/markdown'),
-    'model-card':('Model card and scientific boundaries','docs/model-card.md','Markdown','text/markdown'),
+    'model-card':('Model details and limits','docs/model-card.md','Markdown','text/markdown'),
     'architecture':('Architecture and data provenance','public/renalis-architecture.svg','SVG','image/svg+xml'),
     'challenge-results':('Every scored independent challenge case','docs/originality-challenges.json','JSON','application/json'),
     'observed-results':('Observed HEMOBP baseline results','docs/observed-baseline.json','JSON','application/json'),
-    'license':('MIT code license','LICENSE','Text','text/plain'),
+    'license':('Open-source license (MIT)','LICENSE','Text','text/plain'),
 }
 
 

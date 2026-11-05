@@ -124,3 +124,14 @@
 @media(max-width:760px){.fd-panels{grid-template-columns:1fr}.fd-left{max-width:360px;margin:0 auto}.fd-label{font-size:20px}.fd-sub,.fd-axis,.fd-warn text,.fd-crash text,.fd-danger-label{font-size:18px}}
 .fig-wrap{margin-top:-40px;margin-bottom:96px}@media(max-width:760px){.fig-wrap{margin-top:-16px;margin-bottom:56px}}
 @media(max-width:760px){.ft-sub{display:none}.ft-title{font-size:27px}.ft-value{font-size:27px}.ft-rate{font-size:21px}.ft-rate-num{font-size:22px}.ft-bp text{font-size:19px}.fig-tanks{padding:12px 10px 0}.fig-tanks figcaption{margin:0 -10px;font-size:15px}.fig-tanks figcaption b{font-weight:600}}
+/* Research page: source details folded away */
+.source-more{margin-top:10px}.source-more>summary{cursor:pointer;font-size:13px;font-weight:600;color:#2f5a3d;list-style:none}.source-more>summary::-webkit-details-marker{display:none}.source-more>summary::before{content:'+ '}.source-more[open]>summary::before{content:'− '}.source-more dl{margin-top:10px}
+.research-site .alarm-dots{margin:18px 0}
+.observed-subhead{font-size:15px;margin:18px 0 8px;font-weight:600}
+/* Step 4 planner: short by default, detail on demand */
+.adaptive-lede{font-size:15px;line-height:1.6;margin:10px 0 14px}
+.adaptive-payoff{display:flex;align-items:center;gap:6px;flex-wrap:wrap;font-size:15px;margin:16px 0 4px}.adaptive-payoff b{font-size:18px}
+.adaptive-plan .adaptive-action{display:flex;justify-content:space-between;align-items:center;gap:18px;flex-wrap:wrap;margin-top:16px}.adaptive-plan .adaptive-action p{margin:0;font-size:14px}
+.adaptive-more{margin-top:18px;border-top:1px solid rgba(47,90,61,.15);padding-top:12px}.adaptive-more>summary{cursor:pointer;font-weight:600;font-size:14px;color:#2f5a3d}.adaptive-more>*+*{margin-top:12px}
+.adaptive-distinction-note{font-size:13.5px;line-height:1.6}
+.journey-settings,.compare-checks{margin:14px 0;border:1px solid rgba(47,90,61,.14);border-radius:12px;padding:12px 16px;background:rgba(255,255,255,.5)}.journey-settings>summary,.compare-checks>summary{cursor:pointer;font-weight:600;font-size:14px;color:#2f5a3d}.journey-settings[open]>summary,.compare-checks[open]>summary{margin-bottom:12px}.journey-settings .journey-resources{margin:0}

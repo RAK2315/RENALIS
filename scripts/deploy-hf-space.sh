@@ -27,11 +27,9 @@ cp -r "$ROOT/docs" "$BUILD_DIR/docs"
 mkdir -p "$BUILD_DIR/public" "$BUILD_DIR/data/models"
 cp "$ROOT/public/renalis-architecture.svg" "$BUILD_DIR/public/"
 cp "$ROOT/data/models/hemo_metrics.json" "$BUILD_DIR/data/models/"
-# Copy every output/ file listed in PROJECT_DOCUMENTS. Hugging Face rejects
-# plain git files over 10 MB, so larger ones are skipped with a warning.
+# Copy every output/ file listed in PROJECT_DOCUMENTS.
 grep -o "'output/[^']*'" "$ROOT/backend/app.py" | tr -d "'" | while read -r rel; do
   [ -f "$ROOT/$rel" ] || continue
-  if [ "$(wc -c < "$ROOT/$rel")" -gt 9500000 ]; then echo "Skipping $rel (over 10 MB)"; continue; fi
   mkdir -p "$BUILD_DIR/$(dirname "$rel")"
   cp "$ROOT/$rel" "$BUILD_DIR/$rel"
 done
