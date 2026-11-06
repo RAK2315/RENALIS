@@ -1,0 +1,18 @@
+# Only the website source is needed; Vercel builds it with npm run build.
+archive
+.venv
+.venv-video
+data
+tmp
+ppt
+output
+dist
+artifacts
+video
+backend
+scripts
+tests
+docs
+deploy
+*.sqlite
+*.log
